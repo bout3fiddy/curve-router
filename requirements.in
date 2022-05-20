@@ -1,0 +1,7 @@
+black
+flake8==3.9.2
+isort
+pip-tools
+pre-commit
+requests
+click
