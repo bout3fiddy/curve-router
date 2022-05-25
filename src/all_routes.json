@@ -1,0 +1,163 @@
+{
+	"0x15a629f0665a3eb97d7ae9a7ce7abf73aeb79415 -> 0x9c4a4204b79dd291d6b6571c5be8bbcd0622f050": [
+		[
+			{
+				"base_pool": "0x0000000000000000000000000000000000000000",
+				"coin_a": "0x15a629f0665a3eb97d7ae9a7ce7abf73aeb79415",
+				"coin_a_decimals": 18,
+				"coin_b": "0x9c4a4204b79dd291d6b6571c5be8bbcd0622f050",
+				"coin_b_decimals": 18,
+				"i": 0,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": true,
+				"is_underlying_swap": false,
+				"j": 1,
+				"network": "Mainnet",
+				"pool": "0x01fe650ef2f8e2982295489ae6adc1413bf6011f"
+			}
+		]
+	],
+	"0x9c4a4204b79dd291d6b6571c5be8bbcd0622f050 -> 0x15a629f0665a3eb97d7ae9a7ce7abf73aeb79415": [
+		[
+			{
+				"base_pool": "0x0000000000000000000000000000000000000000",
+				"coin_a": "0x9c4a4204b79dd291d6b6571c5be8bbcd0622f050",
+				"coin_a_decimals": 18,
+				"coin_b": "0x15a629f0665a3eb97d7ae9a7ce7abf73aeb79415",
+				"coin_b_decimals": 18,
+				"i": 1,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": true,
+				"is_underlying_swap": false,
+				"j": 0,
+				"network": "Mainnet",
+				"pool": "0x01fe650ef2f8e2982295489ae6adc1413bf6011f"
+			}
+		]
+	],
+	"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 -> 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": [
+		[
+			{
+				"base_pool": "0x0000000000000000000000000000000000000000",
+				"coin_a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+				"coin_a_decimals": 18,
+				"coin_b": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+				"coin_b_decimals": 18,
+				"i": 0,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": true,
+				"is_underlying_swap": false,
+				"j": 1,
+				"network": "Mainnet",
+				"pool": "0x828b154032950c8ff7cf8085d841723db2696056"
+			},
+			{
+				"base_pool": "0x0000000000000000000000000000000000000000",
+				"coin_a": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+				"coin_a_decimals": 18,
+				"coin_b": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+				"coin_b_decimals": 18,
+				"i": 1,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": true,
+				"is_underlying_swap": false,
+				"j": 0,
+				"network": "Mainnet",
+				"pool": "0xdc24316b9ae028f1497c275eb9192a3ea0f67022"
+			}
+		],
+		[
+			{
+				"base_pool": "0x0",
+				"coin_a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+				"coin_a_decimals": 18,
+				"coin_b": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+				"coin_b_decimals": 18,
+				"i": 0,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": false,
+				"is_underlying_swap": false,
+				"is_wrapper": true,
+				"j": 0,
+				"network": "Mainnet",
+				"pool": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+			}
+		]
+	],
+	"0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee -> 0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2": [
+		[
+			{
+				"base_pool": "0x0000000000000000000000000000000000000000",
+				"coin_a": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+				"coin_a_decimals": 18,
+				"coin_b": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+				"coin_b_decimals": 18,
+				"i": 0,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": true,
+				"is_underlying_swap": false,
+				"j": 1,
+				"network": "Mainnet",
+				"pool": "0xdc24316b9ae028f1497c275eb9192a3ea0f67022"
+			},
+			{
+				"base_pool": "0x0000000000000000000000000000000000000000",
+				"coin_a": "0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+				"coin_a_decimals": 18,
+				"coin_b": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+				"coin_b_decimals": 18,
+				"i": 1,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": true,
+				"is_underlying_swap": false,
+				"j": 0,
+				"network": "Mainnet",
+				"pool": "0x828b154032950c8ff7cf8085d841723db2696056"
+			}
+		],
+		[
+			{
+				"base_pool": "0x0",
+				"coin_a": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+				"coin_a_decimals": 18,
+				"coin_b": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+				"coin_b_decimals": 18,
+				"i": 0,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": false,
+				"is_underlying_swap": false,
+				"is_wrapper": true,
+				"j": 0,
+				"network": "Mainnet",
+				"pool": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+			}
+		]
+	],
+	"0xf49764c9c5d644ece6ae2d18ffd9f1e902629777 -> 0x6b3595068778dd592e39a122f4f5a5cf09c90fe2": [
+		[
+			{
+				"base_pool": "0x0000000000000000000000000000000000000000",
+				"coin_a": "0xf49764c9c5d644ece6ae2d18ffd9f1e902629777",
+				"coin_a_decimals": 18,
+				"coin_b": "0x6b3595068778dd592e39a122f4f5a5cf09c90fe2",
+				"coin_b_decimals": 18,
+				"i": 0,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": true,
+				"is_underlying_swap": false,
+				"j": 1,
+				"network": "Mainnet",
+				"pool": "0x0437ac6109e8a366a1f4816edf312a36952db856"
+			}
+		]
+	]
+}
