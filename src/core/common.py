@@ -3,15 +3,13 @@ from dataclasses import dataclass
 import typing
 
 
-# ------------ Core DataClasses ------------ #
-
-
 class Coin(typing.NamedTuple):
     """A dataclass cacheing some coin info and a few basic methods."""
 
     address: str
     network: str
     decimals: int
+    is_lp_token: bool = False
 
 
 class BasePool(typing.NamedTuple):
@@ -24,66 +22,59 @@ class BasePool(typing.NamedTuple):
     coins: typing.List[Coin]
 
 
-@dataclass(eq=True, frozen=True)
-class Pool:
+@dataclass(frozen=True)
+class Swap:
     """A dataclass containing details on the pool connecting two assets"""
 
-    address: str
+    pool: str  # address
     network: str
-    coin_a: Coin
-    coin_b: Coin
+    is_cryptoswap: bool
+    is_stableswap: bool
+    is_metapool: bool
+    base_pool: str  # address
+    is_underlying_swap: bool
+    i: int  # coin to swap from
+    j: int  # coin to swap to
+    coin_a: str  # address
+    coin_b: str  # address
+    coin_a_decimals: int
+    coin_b_decimals: int
 
 
-# ------------ Core CoinMap ------------ #
+@dataclass(frozen=True)
+class Wrapper(Swap):
+
+    is_wrapper: bool = True
 
 
 class CoinMap:
-    def __init__(
-        self, coins: typing.List[str], base_pools: typing.List[BasePool]
-    ):
+    def __init__(self, coins: typing.List[str]):
 
         self.number_of_coins = len(coins)
         self.coins = coins
-        self.coin_pairs = {coin: set() for coin in coins}
-        self.coin_pair_pool = {}
-        self.base_pools = base_pools
+        self.mapping = {coin: set() for coin in coins}
+        self.coin_pairs = {}
 
-    def add_pair(self, coin_a: Coin, coin_b: Coin, pool: Pool):
+    def add_pair(self, coin_a: Coin, coin_b: Coin, swap: Swap):
 
-        if coin_a not in self.coin_pairs.keys():
-            self.coin_pairs[coin_a] = set()
+        if coin_a not in self.mapping.keys():
+            self.mapping[coin_a] = set()
 
-        self.coin_pairs[coin_a].add((coin_b, pool))
-        self.coin_pair_pool[(coin_a.address, coin_b.address)] = pool
+        self.mapping[coin_a].add((coin_b, swap))
+        self.coin_pairs[(coin_a, coin_b)] = swap
 
 
 class PathFinder:
     def __init__(
-        self, coins: typing.List[str], base_pools: typing.List[BasePool]
+        self, coins: typing.List[str]
     ):
-
-        self.coin_map = CoinMap(coins, base_pools)
+        self.coin_map = CoinMap(coins)
 
     @abstractmethod
-    def get_route(
+    def get_routes(
         self,
         coin_a: Coin,
         coin_b: Coin,
         max_hops: int = 5,
-        verbose: bool = True,
-    ) -> typing.List[typing.Dict[typing.Tuple[str, str], typing.Dict]]:
+    ) -> typing.List[typing.List[typing.Dict]]:
         raise NotImplementedError
-
-    def print_route(self, coin_a: Coin, coin_b: Coin, max_hops: int = 5):
-        all_routes = self.get_route(coin_a, coin_b, max_hops)
-
-        c = 1
-        for route in all_routes:
-            print(f"Route #{c}")
-            c += 1
-            for pair, pool in route.items():
-                print(
-                    f"Coin in: {pair[0]} -> Pool: {pair[1]} -> "
-                    f"Coin out: {pool['address']}\n"
-                )
-            print("\n")

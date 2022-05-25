@@ -1,4 +1,4 @@
-# Curve A-star Router
+# Curve Router
 
 ## Overview
 

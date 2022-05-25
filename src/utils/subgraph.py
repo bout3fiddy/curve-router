@@ -2,8 +2,9 @@ import requests
 import datetime
 
 
-def get_pool_data(api):
+def get_pool_data(api: str):
 
+    # todo: when there are more than 1000 pools, this will need to be updated
     query = """
     {
         platforms {
@@ -11,6 +12,9 @@ def get_pool_data(api):
                 coins
                 coinDecimals
                 address
+                isV2
+                metapool
+                basePool
             }
         }
     }

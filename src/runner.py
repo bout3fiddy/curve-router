@@ -2,15 +2,18 @@ import click
 import json
 
 from src.construct_coin_map import compile_graph
-from src.core.common import PathFinder
+from src.core.coins import THREECRV_BASEPOOL
 
 
+@click.command()
 @click.option("--network_name", default="Mainnet", type=str)
 @click.option("--max_pairs", default=1e6, type=int)
 def main(network_name, max_pairs):
 
-    path_finder: PathFinder = compile_graph(network_name=network_name)
-    coin_pairs = list(path_finder.coin_map.coin_pair_pool.keys())
+    path_finder = compile_graph(
+        network_name=network_name, base_pools=[THREECRV_BASEPOOL]
+    )
+    coin_pairs = path_finder.coin_map.coin_pairs
     all_routes = {}
 
     c = 0
@@ -18,8 +21,8 @@ def main(network_name, max_pairs):
 
         c += 1
 
-        all_routes[(coin_a, coin_b)] = path_finder.get_route(
-            coin_a, coin_b, max_hops=5, verbose=False
+        all_routes[f"{coin_a.address} -> {coin_b.address}"] = (
+            path_finder.get_routes(coin_a, coin_b, max_hops=5)
         )
 
         if c == max_pairs:

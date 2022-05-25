@@ -1,5 +1,4 @@
-from src.core.common import Coin, Pool, BasePool
-
+from src.core.common import Coin, Swap, BasePool, Wrapper
 
 # ----- Coins ----- #
 
@@ -49,20 +48,38 @@ ETH = Coin(
 )
 
 
-# ----- Pools ----- #
+# ----- WETH ----- #
 
 
-WETH_ETH_POOL = Pool(
-    address="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
+WETH_ETH_POOL = Wrapper(
+    pool="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
     network="Mainnet",
-    coin_a=WETH,
-    coin_b=ETH,
+    coin_a=WETH.address,
+    coin_a_decimals=WETH.decimals,
+    coin_b=ETH.address,
+    coin_b_decimals=ETH.decimals,
+    is_cryptoswap=False,
+    is_stableswap=False,
+    is_metapool=False,
+    base_pool="0x0",
+    is_underlying_swap=False,
+    i=0,
+    j=0,
 )
-ETH_WETH_POOL = Pool(
-    address="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
+ETH_WETH_POOL = Wrapper(
+    pool="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
     network="Mainnet",
-    coin_a=ETH,
-    coin_b=WETH,
+    coin_a=ETH.address,
+    coin_a_decimals=ETH.decimals,
+    coin_b=WETH.address,
+    coin_b_decimals=WETH.decimals,
+    is_cryptoswap=False,
+    is_stableswap=False,
+    is_metapool=False,
+    base_pool="0x0",
+    is_underlying_swap=False,
+    i=0,
+    j=0,
 )
 
 # ----- BasePools ----- #
