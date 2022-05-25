@@ -39,7 +39,7 @@ class Pool:
 
 class CoinMap:
     def __init__(
-            self, coins: typing.List[str], base_pools: typing.List[BasePool]
+        self, coins: typing.List[str], base_pools: typing.List[BasePool]
     ):
 
         self.number_of_coins = len(coins)
@@ -59,18 +59,18 @@ class CoinMap:
 
 class PathFinder:
     def __init__(
-            self, coins: typing.List[str], base_pools: typing.List[BasePool]
+        self, coins: typing.List[str], base_pools: typing.List[BasePool]
     ):
 
         self.coin_map = CoinMap(coins, base_pools)
 
     @abstractmethod
     def get_route(
-            self,
-            coin_a: Coin,
-            coin_b: Coin,
-            max_hops: int = 5,
-            verbose: bool = True
+        self,
+        coin_a: Coin,
+        coin_b: Coin,
+        max_hops: int = 5,
+        verbose: bool = True,
     ) -> typing.List[typing.Dict[typing.Tuple[str, str], typing.Dict]]:
         raise NotImplementedError
 

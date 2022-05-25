@@ -52,7 +52,11 @@ class StableSwap:
             for x in xp:
                 D_P = D_P * D // (self.n * x)
             Dprev = D
-            D = (Ann * S + D_P * self.n) * D // ((Ann - 1) * D + (self.n + 1) * D_P)
+            D = (
+                (Ann * S + D_P * self.n)
+                * D
+                // ((Ann - 1) * D + (self.n + 1) * D_P)
+            )
 
         return D
 
@@ -66,7 +70,9 @@ class StableSwap:
         """
         D = self.D()
         xx = self.xp()
-        xx[i] = x  # x is quantity of underlying asset brought to 1e18 precision
+        xx[
+            i
+        ] = x  # x is quantity of underlying asset brought to 1e18 precision
         xx = [xx[k] for k in range(self.n) if k != j]
         Ann = self.A * self.n
         c = D
@@ -188,7 +194,11 @@ class StableSwap:
             for x in xp:
                 D_P = D_P * D // (self.n * x)
             Dprev = D
-            D = (Ann * S + D_P * self.n) * D // ((Ann - 1) * D + (self.n + 1) * D_P)
+            D = (
+                (Ann * S + D_P * self.n)
+                * D
+                // ((Ann - 1) * D + (self.n + 1) * D_P)
+            )
 
         return D
 

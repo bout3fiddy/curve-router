@@ -5,7 +5,7 @@ from core.coins import (
     ETH_WETH_POOL,
     THREECRV_BASEPOOL,
     WETH,
-    WETH_ETH_POOL
+    WETH_ETH_POOL,
 )
 from core.common import BasePool, CoinMap, Coin, PathFinder, Pool
 from core.constants import SUBGRAPH_API
@@ -16,7 +16,7 @@ RESERVE_THRESHOLD = 100  # num coins of each type in the pool
 
 
 def compile_graph(
-        network_name: str, base_pools: typing.List[BasePool]
+    network_name: str, base_pools: typing.List[BasePool]
 ) -> typing.Any[DepthFirstSearch, PathFinder]:
 
     # query subgraph for pools in network_name

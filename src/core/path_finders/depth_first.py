@@ -4,18 +4,17 @@ from src.core.common import BasePool, Coin, PathFinder
 
 
 class DepthFirstSearch(PathFinder):
-
     def __init__(
-            self, coins: typing.List[str], base_pools: typing.List[BasePool]
+        self, coins: typing.List[str], base_pools: typing.List[BasePool]
     ):
         super().__init__(coins, base_pools)
 
     def get_route(
-            self,
-            coin_a: Coin,
-            coin_b: Coin,
-            max_hops: int = 5,
-            verbose: bool = True
+        self,
+        coin_a: Coin,
+        coin_b: Coin,
+        max_hops: int = 5,
+        verbose: bool = True,
     ) -> typing.List[typing.Dict[typing.Tuple[str, str], typing.Dict]]:
 
         if verbose:
