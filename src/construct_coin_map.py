@@ -3,13 +3,11 @@ import typing
 from core.coins import (
     ETH,
     ETH_WETH_POOL,
-    THREECRV_BASEPOOL,
     WETH,
     WETH_ETH_POOL,
 )
-from core.common import BasePool, CoinMap, Coin, PathFinder, Swap
-from core.constants import SUBGRAPH_API
-from core.path_finders.depth_first import DepthFirstSearch
+from core.common import BasePool, Coin, Swap
+from src.utils.constants import SUBGRAPH_API
 from src.core.path_finders.depth_first import DepthFirstSearch
 from utils.subgraph import get_pool_data, get_latest_pool_coin_reserves
 

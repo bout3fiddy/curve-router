@@ -30,7 +30,7 @@ def main(network_name, max_pairs):
 
     json.dump(
         all_routes,
-        open("all_routes.json", "w"),
+        open(f"all_routes_{network_name}.json", "w"),
         sort_keys=True,
         indent="\t",
         separators=(",", ": "),

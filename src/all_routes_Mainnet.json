@@ -40,6 +40,24 @@
 	"0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2 -> 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee": [
 		[
 			{
+				"base_pool": "0x0",
+				"coin_a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+				"coin_a_decimals": 18,
+				"coin_b": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+				"coin_b_decimals": 18,
+				"i": 0,
+				"is_cryptoswap": false,
+				"is_metapool": false,
+				"is_stableswap": false,
+				"is_underlying_swap": false,
+				"is_wrapper": true,
+				"j": 0,
+				"network": "Mainnet",
+				"pool": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+			}
+		],
+		[
+			{
 				"base_pool": "0x0000000000000000000000000000000000000000",
 				"coin_a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
 				"coin_a_decimals": 18,
@@ -68,24 +86,6 @@
 				"j": 0,
 				"network": "Mainnet",
 				"pool": "0xdc24316b9ae028f1497c275eb9192a3ea0f67022"
-			}
-		],
-		[
-			{
-				"base_pool": "0x0",
-				"coin_a": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-				"coin_a_decimals": 18,
-				"coin_b": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
-				"coin_b_decimals": 18,
-				"i": 0,
-				"is_cryptoswap": false,
-				"is_metapool": false,
-				"is_stableswap": false,
-				"is_underlying_swap": false,
-				"is_wrapper": true,
-				"j": 0,
-				"network": "Mainnet",
-				"pool": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
 			}
 		]
 	],
