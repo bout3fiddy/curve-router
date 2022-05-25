@@ -34,26 +34,19 @@ class Pool:
     coin_b: Coin
 
 
-@dataclass
-class Route:
-    """A dataclass containing multi hops between coin a and coin b"""
-
-    n_hops: int
-    pools: typing.List[Pool]
-    coin_a: str
-    coin_b: str
-
-
 # ------------ Core CoinMap ------------ #
 
 
 class CoinMap:
-    def __init__(self, coins: typing.List[str]):
+    def __init__(
+            self, coins: typing.List[str], base_pools: typing.List[BasePool]
+    ):
 
         self.number_of_coins = len(coins)
         self.coins = coins
         self.coin_pairs = {coin: set() for coin in coins}
         self.coin_pair_pool = {}
+        self.base_pools = base_pools
 
     def add_pair(self, coin_a: Coin, coin_b: Coin, pool: Pool):
 
@@ -61,15 +54,26 @@ class CoinMap:
             self.coin_pairs[coin_a] = set()
 
         self.coin_pairs[coin_a].add((coin_b, pool))
-        self.coin_pair_pool[(coin_a, coin_b)] = pool
+        self.coin_pair_pool[(coin_a.address, coin_b.address)] = pool
+
+
+class PathFinder:
+    def __init__(
+            self, coins: typing.List[str], base_pools: typing.List[BasePool]
+    ):
+
+        self.coin_map = CoinMap(coins, base_pools)
 
     @abstractmethod
     def get_route(
-        self, coin_a: Coin, coin_b: Coin, max_hops: int = 5, verbose: bool = True
-    ) -> typing.List[Route]:
+            self,
+            coin_a: Coin,
+            coin_b: Coin,
+            max_hops: int = 5,
+            verbose: bool = True
+    ) -> typing.List[typing.Dict[typing.Tuple[str, str], typing.Dict]]:
         raise NotImplementedError
 
-    @abstractmethod
     def print_route(self, coin_a: Coin, coin_b: Coin, max_hops: int = 5):
         all_routes = self.get_route(coin_a, coin_b, max_hops)
 
@@ -77,8 +81,9 @@ class CoinMap:
         for route in all_routes:
             print(f"Route #{c}")
             c += 1
-            for hops in route.pools:
+            for pair, pool in route.items():
                 print(
-                    f"Coin in: {hops.coin_a.address} -> Pool: {hops.address} -> Coin out: {hops.coin_b.address}\n"
+                    f"Coin in: {pair[0]} -> Pool: {pair[1]} -> "
+                    f"Coin out: {pool['address']}\n"
                 )
             print("\n")
