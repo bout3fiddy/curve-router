@@ -1,6 +1,6 @@
+import typing
 from abc import abstractmethod
 from dataclasses import dataclass
-import typing
 
 
 class Coin(typing.NamedTuple):
@@ -66,9 +66,7 @@ class CoinMap:
 
 
 class PathFinder:
-    def __init__(
-        self, coins: typing.List[str]
-    ):
+    def __init__(self, coins: typing.List[str]):
         self.coin_map = CoinMap(coins)
 
     @abstractmethod

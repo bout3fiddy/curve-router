@@ -1,5 +1,6 @@
-import click
 import json
+
+import click
 
 from router.construct_coin_map import compile_graph
 from router.core.coins import THREECRV_BASEPOOL
@@ -21,8 +22,8 @@ def main(network_name, max_pairs):
 
         c += 1
 
-        all_routes[f"{coin_a.address} -> {coin_b.address}"] = (
-            path_finder.get_routes(coin_a, coin_b, max_hops=5)
+        all_routes[f"{coin_a.address} -> {coin_b.address}"] = path_finder.get_routes(
+            coin_a, coin_b, max_hops=5
         )
 
         if c == max_pairs:

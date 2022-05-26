@@ -1,15 +1,12 @@
 import itertools
 import typing
-from core.coins import (
-    ETH,
-    ETH_WETH_POOL,
-    WETH,
-    WETH_ETH_POOL,
-)
+
+from core.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
 from core.common import BasePool, Coin, Swap
-from router.utils.constants import SUBGRAPH_API
+from utils.subgraph import get_latest_pool_coin_reserves, get_pool_data
+
 from router.core.path_finders.depth_first import DepthFirstSearch
-from utils.subgraph import get_pool_data, get_latest_pool_coin_reserves
+from router.utils.constants import SUBGRAPH_API
 
 RESERVE_THRESHOLD = 100  # num coins of each type in the pool
 
@@ -72,7 +69,7 @@ def compile_graph(
                 address=coin,
                 network=network_name,
                 decimals=int(pool["coinDecimals"][idx]),
-                is_lp_token=coin in base_pool_tokens
+                is_lp_token=coin in base_pool_tokens,
             )
             coins_in_pool.append(coin_dataclass)
 
@@ -96,8 +93,8 @@ def compile_graph(
             j = pool["coins"].index(coin_b.address)
 
             # it is an underlying swap if either coin is a base_pool lp_token
-            is_underlying_swap = (
-                is_metapool and (coin_a.is_lp_token or coin_b.is_lp_token)
+            is_underlying_swap = is_metapool and (
+                coin_a.is_lp_token or coin_b.is_lp_token
             )
 
             # get correct i and j for underlying swaps:
@@ -121,11 +118,9 @@ def compile_graph(
                 is_stableswap=not is_cryptoswap,
                 is_metapool=is_metapool,
                 is_underlying_swap=is_underlying_swap,
-                base_pool=pool["basePool"]
+                base_pool=pool["basePool"],
             )
 
-            path_finder.coin_map.add_pair(
-                coin_a, coin_b, swap
-            )
+            path_finder.coin_map.add_pair(coin_a, coin_b, swap)
 
     return path_finder

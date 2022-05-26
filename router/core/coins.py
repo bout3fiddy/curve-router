@@ -1,4 +1,4 @@
-from router.core.common import Coin, BasePool, Wrapper
+from router.core.common import BasePool, Coin, Wrapper
 
 # ----- Coins ----- #
 
@@ -32,9 +32,7 @@ CRV = Coin(
     network="Mainnet",
     decimals=18,
 )
-THREECRV_TOKEN = Coin(
-    "0x6c3f90f043a72fa612cbac8115ee7e52bde6e490", "Mainnet", 18
-)
+THREECRV_TOKEN = Coin("0x6c3f90f043a72fa612cbac8115ee7e52bde6e490", "Mainnet", 18)
 
 WETH = Coin(
     address="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
@@ -65,7 +63,7 @@ WETH_ETH_POOL = Wrapper(
     is_underlying_swap=False,
     i=0,
     j=0,
-    wrap=False
+    wrap=False,
 )
 ETH_WETH_POOL = Wrapper(
     pool="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
@@ -81,7 +79,7 @@ ETH_WETH_POOL = Wrapper(
     is_underlying_swap=False,
     i=0,
     j=0,
-    wrap=True
+    wrap=True,
 )
 
 # ----- BasePools ----- #

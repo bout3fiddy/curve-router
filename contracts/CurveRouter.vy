@@ -28,13 +28,13 @@ def __init__():
 @view
 def get_dy_route(
     dx: uint256,
-    pool_addresses: address[10], 
-    i: uint256[10], 
-    j: uint256[10], 
+    pool_addresses: address[10],
+    i: uint256[10],
+    j: uint256[10],
     is_cryptoswap: bool[10],
     is_underlying_swap: bool[10],
     is_wrapper: bool[10],
-) -> uint256: 
+) -> uint256:
 
     dy: uint256 = dx
     for route_idx in range(10):
@@ -46,7 +46,7 @@ def get_dy_route(
         # so we can just continue
         if is_wrapper[route_idx]:
             continue
-        
+
         # stableswap swaps:
         if is_underlying_swap[route_idx] and not is_cryptoswap[route_idx]:
             dy = StableSwap(pool_addresses[route_idx]).get_dy_underlying(

@@ -56,8 +56,6 @@ class DepthFirstSearch(PathFinder):
         paths = []
         for (coin, pool) in self.coin_map.mapping[coin_to_sell]:
             if coin not in path:
-                paths.extend(
-                    self._depth_first_search(coin, target_coin_to_buy, path)
-                )
+                paths.extend(self._depth_first_search(coin, target_coin_to_buy, path))
 
         return paths

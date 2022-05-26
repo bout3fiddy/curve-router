@@ -8,6 +8,4 @@ SUBGRAPH_API = {
     "Optimism": "https://api.thegraph.com/subgraphs/name/convex-community/volume-optimism",
 }
 
-CRV_EMISSIONS = (
-    "https://api.thegraph.com/subgraphs/name/convex-community/crv-emissions"
-)
+CRV_EMISSIONS = "https://api.thegraph.com/subgraphs/name/convex-community/crv-emissions"

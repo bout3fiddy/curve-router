@@ -1,5 +1,5 @@
 import pytest
-from brownie import accounts, ZERO_ADDRESS, CurveRouter
+from brownie import ZERO_ADDRESS, CurveRouter, accounts
 
 
 @pytest.fixture(scope="module")
