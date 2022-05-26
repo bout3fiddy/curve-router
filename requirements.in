@@ -1,4 +1,5 @@
 black
+eth-brownie
 flake8==3.9.2
 isort
 pip-tools
