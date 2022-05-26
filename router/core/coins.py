@@ -1,4 +1,4 @@
-from src.core.common import Coin, Swap, BasePool, Wrapper
+from router.core.common import Coin, BasePool, Wrapper
 
 # ----- Coins ----- #
 
@@ -65,6 +65,7 @@ WETH_ETH_POOL = Wrapper(
     is_underlying_swap=False,
     i=0,
     j=0,
+    wrap=False
 )
 ETH_WETH_POOL = Wrapper(
     pool="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
@@ -80,6 +81,7 @@ ETH_WETH_POOL = Wrapper(
     is_underlying_swap=False,
     i=0,
     j=0,
+    wrap=True
 )
 
 # ----- BasePools ----- #

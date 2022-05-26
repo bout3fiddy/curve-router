@@ -1,8 +1,8 @@
 import click
 import json
 
-from src.construct_coin_map import compile_graph
-from src.core.coins import THREECRV_BASEPOOL
+from router.construct_coin_map import compile_graph
+from router.core.coins import THREECRV_BASEPOOL
 
 
 @click.command()

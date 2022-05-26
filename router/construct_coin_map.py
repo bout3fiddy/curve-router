@@ -7,8 +7,8 @@ from core.coins import (
     WETH_ETH_POOL,
 )
 from core.common import BasePool, Coin, Swap
-from src.utils.constants import SUBGRAPH_API
-from src.core.path_finders.depth_first import DepthFirstSearch
+from router.utils.constants import SUBGRAPH_API
+from router.core.path_finders.depth_first import DepthFirstSearch
 from utils.subgraph import get_pool_data, get_latest_pool_coin_reserves
 
 RESERVE_THRESHOLD = 100  # num coins of each type in the pool
@@ -99,6 +99,13 @@ def compile_graph(
             is_underlying_swap = (
                 is_metapool and (coin_a.is_lp_token or coin_b.is_lp_token)
             )
+
+            # get correct i and j for underlying swaps:
+            if is_underlying_swap and i == 0:  # going from asset to underlying
+                j = base_pool.index(coin_b)
+
+            if is_underlying_swap and j == 0:  # going from underlying to asset
+                i = base_pool.index(coin_a)
 
             # make swap object:
             swap = Swap(

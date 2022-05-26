@@ -45,6 +45,7 @@ class Swap:
 class Wrapper(Swap):
 
     is_wrapper: bool = True
+    wrap: bool
 
 
 class CoinMap:
