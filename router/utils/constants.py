@@ -1,11 +1,12 @@
+SUBGRAPH_URL = "https://api.thegraph.com/subgraphs/name/convex-community/"
 SUBGRAPH_API = {
-    "Mainnet": "https://api.thegraph.com/subgraphs/name/convex-community/volume-mainnet",
-    "xDAI": "https://api.thegraph.com/subgraphs/name/convex-community/volume-xdai",
-    "Arbitrum": "https://api.thegraph.com/subgraphs/name/convex-community/volume-arbitrum",
-    "Fantom": "https://api.thegraph.com/subgraphs/name/convex-community/volume-fantom",
-    "Avalanche": "https://api.thegraph.com/subgraphs/name/convex-community/volume-avalanche",
-    "Matic": "https://api.thegraph.com/subgraphs/name/convex-community/volume-matic",
-    "Optimism": "https://api.thegraph.com/subgraphs/name/convex-community/volume-optimism",
+    "Mainnet": SUBGRAPH_URL+"volume-mainnet",
+    "xDAI": SUBGRAPH_URL+"volume-xdai",
+    "Arbitrum": SUBGRAPH_URL+"volume-arbitrum",
+    "Fantom": SUBGRAPH_URL+"volume-fantom",
+    "Avalanche": SUBGRAPH_URL+"volume-avalanche",
+    "Matic": SUBGRAPH_URL+"volume-matic",
+    "Optimism": SUBGRAPH_URL+"volume-optimism",
 }
 
-CRV_EMISSIONS = "https://api.thegraph.com/subgraphs/name/convex-community/crv-emissions"
+CRV_EMISSIONS = SUBGRAPH_URL+"crv-emissions"

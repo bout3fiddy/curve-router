@@ -4,6 +4,7 @@
 @license MIT
 """
 
+
 interface StableSwap:
     def get_dy(i: int128, j: int128, dx: uint256) -> uint256: view
     def get_dy_underlying(i: int128, j: int128, dx: uint256) -> uint256: view
@@ -24,6 +25,23 @@ def __init__():
     pass
 
 
+@internal
+@view
+def _get_dy_stableswap(pool_address: address, dx: uint256, i: int128, j: int128, underlying: bool = False) -> uint256:
+
+    if underlying:
+        return StableSwap(pool_address).get_dy_underlying(i, j, dx)
+
+    return StableSwap(pool_address).get_dy(i, j, dx)
+
+
+@internal
+@view
+def _get_dy_cryptoswap(pool_address: address, dx: uint256, i: uint256, j: uint256) -> uint256:
+
+    return CryptoSwap(pool_address).get_dy(i, j, dx)
+
+
 @external
 @view
 def get_dy_route(
@@ -36,33 +54,28 @@ def get_dy_route(
     is_wrapper: bool[10],
 ) -> uint256:
 
-    dy: uint256 = dx
-    for route_idx in range(10):
+    dy: uint256 = 0
+    _dx: uint256 = dx
 
-        if pool_addresses[route_idx] == ZERO_ADDRESS:
+    for idx in range(10):        
+
+        if pool_addresses[idx] == ZERO_ADDRESS:
             break
 
-        # if a step involves wrapping or unwrapping, dy_idx == dx_idx
+        # if a step involves wrapping or unwrapping, dy = dx
         # so we can just continue
-        if is_wrapper[route_idx]:
+        if is_wrapper[idx]:
             continue
 
         # stableswap swaps:
-        if is_underlying_swap[route_idx] and not is_cryptoswap[route_idx]:
-            dy = StableSwap(pool_addresses[route_idx]).get_dy_underlying(
-                convert(i[route_idx], int128), convert(j[route_idx], int128), dy
-            )
-            continue
+        if not is_cryptoswap[idx]:
+            i_int: int128 = convert(i[idx], int128)
+            j_int: int128 = convert(j[idx], int128)
+            dy = self._get_dy_stableswap(pool_addresses[idx], _dx, i_int, j_int, is_underlying_swap[idx])
 
-        if not is_cryptoswap[route_idx] and not is_underlying_swap[route_idx]:
-            dy = StableSwap(pool_addresses[route_idx]).get_dy(
-                convert(i[route_idx], int128), convert(j[route_idx], int128), dy
-            )
-            continue
-
-        # cryptoswap swaps:
-        if is_cryptoswap[route_idx] and not is_underlying_swap[route_idx]:
-            dy = CryptoSwap(pool_addresses[route_idx]).get_dy(i[route_idx], j[route_idx], dy)
-            continue
+        elif is_cryptoswap[idx]:
+            dy = self._get_dy_cryptoswap(pool_addresses[idx], _dx, i[idx], j[idx])
+        
+        _dx = dy
 
     return dy

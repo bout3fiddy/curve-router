@@ -1,5 +1,4 @@
 import typing
-from abc import abstractmethod
 from dataclasses import dataclass
 
 
@@ -44,8 +43,8 @@ class Swap:
 @dataclass(frozen=True)
 class Wrapper(Swap):
 
-    is_wrapper: bool = True
     wrap: bool
+    is_wrapper: bool = True
 
 
 class CoinMap:
@@ -63,17 +62,3 @@ class CoinMap:
 
         self.mapping[coin_a].add((coin_b, swap))
         self.coin_pairs[(coin_a, coin_b)] = swap
-
-
-class PathFinder:
-    def __init__(self, coins: typing.List[str]):
-        self.coin_map = CoinMap(coins)
-
-    @abstractmethod
-    def get_routes(
-        self,
-        coin_a: Coin,
-        coin_b: Coin,
-        max_hops: int = 5,
-    ) -> typing.List[typing.List[typing.Dict]]:
-        raise NotImplementedError

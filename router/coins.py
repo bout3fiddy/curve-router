@@ -1,4 +1,4 @@
-from router.core.common import BasePool, Coin, Wrapper
+from router.common import BasePool, Coin, Wrapper
 
 # ----- Coins ----- #
 
@@ -32,7 +32,6 @@ CRV = Coin(
     network="Mainnet",
     decimals=18,
 )
-THREECRV_TOKEN = Coin("0x6c3f90f043a72fa612cbac8115ee7e52bde6e490", "Mainnet", 18)
 
 WETH = Coin(
     address="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
@@ -84,11 +83,17 @@ ETH_WETH_POOL = Wrapper(
 
 # ----- BasePools ----- #
 
+THREECRV_TOKEN = Coin(
+    "0x6c3f90f043a72fa612cbac8115ee7e52bde6e490",
+    network="Mainnet",
+    decimals=18,
+    is_lp_token=True
+)
 
 THREECRV_BASEPOOL = BasePool(
     pool_address="0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7".lower(),
     lp_token=THREECRV_TOKEN,
     network="Mainnet",
     lp_token_decimals=18,
-    coins=[DAI, USDC, USDT],
+    coins=[DAI, USDC, USDT],  # this is also how coin indices are arranged
 )

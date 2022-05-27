@@ -1,11 +1,11 @@
 import typing
 
-from router.core.common import Coin, PathFinder
+from router.common import Coin, CoinMap
 
 
-class DepthFirstSearch(PathFinder):
+class Router:
     def __init__(self, coins: typing.List[str]):
-        super().__init__(coins)
+        self.coin_map = CoinMap(coins)
 
     def get_routes(
         self,
@@ -13,6 +13,19 @@ class DepthFirstSearch(PathFinder):
         coin_b: Coin,
         max_hops: int = 5,
     ) -> typing.List[typing.List[typing.Dict]]:
+        """_summary_
+
+        Args:
+            coin_a (Coin): _description_
+            coin_b (Coin): _description_
+            max_hops (int, optional): _description_. Defaults to 5.
+
+        Raises:
+            ValueError: _description_
+
+        Returns:
+            typing.List[typing.List[typing.Dict]]: _description_
+        """
 
         coin_paths = self._depth_first_search(coin_a, coin_b, [])
 
@@ -40,7 +53,20 @@ class DepthFirstSearch(PathFinder):
         target_coin_to_buy: Coin,
         path: typing.List,
         max_hops: int = 5,
-    ):
+    ) -> typing.List:
+        """_summary_
+
+        Inspiration: https://stackabuse.com/depth-first-search-dfs-in-python-theory-and-implementation/
+
+        Args:
+            coin_to_sell (Coin): _description_
+            target_coin_to_buy (Coin): _description_
+            path (typing.List): _description_
+            max_hops (int, optional): _description_. Defaults to 5.
+
+        Returns:
+            typing.List: _description_
+        """
 
         path = path + [coin_to_sell]
 
@@ -56,6 +82,8 @@ class DepthFirstSearch(PathFinder):
         paths = []
         for (coin, pool) in self.coin_map.mapping[coin_to_sell]:
             if coin not in path:
-                paths.extend(self._depth_first_search(coin, target_coin_to_buy, path))
+                paths.extend(
+                    self._depth_first_search(coin, target_coin_to_buy, path)
+                )
 
         return paths

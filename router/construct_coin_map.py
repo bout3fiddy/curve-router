@@ -1,23 +1,23 @@
 import itertools
 import typing
 
-from core.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
-from core.common import BasePool, Coin, Swap
+from router.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
+from router.common import BasePool, Coin, Swap
+from router.core import Router
+from router.utils.constants import SUBGRAPH_API
 from utils.subgraph import get_latest_pool_coin_reserves, get_pool_data
 
-from router.core.path_finders.depth_first import DepthFirstSearch
-from router.utils.constants import SUBGRAPH_API
 
 RESERVE_THRESHOLD = 100  # num coins of each type in the pool
 
 
-def compile_graph(
+def init_router(
     network_name: str, base_pools: typing.List[BasePool]
-) -> DepthFirstSearch:
+) -> Router:
 
     # query subgraph for pools in network_name
     data = get_pool_data(SUBGRAPH_API[network_name])
-    base_pool_tokens = [base_pool.lp_token for base_pool in base_pools]
+    base_pool_tokens = [base_pool.lp_token.address for base_pool in base_pools]
 
     # select pools with coins greater than RESERVE_THRESHOLD:
     vetted_pools = []
@@ -49,18 +49,18 @@ def compile_graph(
     all_coins_in_vetted_pools = list(set(all_coins_in_vetted_pools))
 
     # init coin map:
-    path_finder = DepthFirstSearch(all_coins_in_vetted_pools)
+    router = Router(all_coins_in_vetted_pools)
 
     # add weth <-> eth wrapper contract:
-    path_finder.coin_map.add_pair(WETH, ETH, WETH_ETH_POOL)
-    path_finder.coin_map.add_pair(ETH, WETH, ETH_WETH_POOL)
+    router.coin_map.add_pair(WETH, ETH, WETH_ETH_POOL)
+    router.coin_map.add_pair(ETH, WETH, ETH_WETH_POOL)
 
     # add the rest of the pairs:
     for pool in vetted_pools:
 
         pool_address = pool["address"]
-        is_cryptoswap = pool["isV2"] == "true"
-        is_metapool = pool["metapool"] == "true"
+        is_cryptoswap = pool["isV2"]
+        is_metapool = pool["metapool"]
 
         # get all coins in the pool:
         coins_in_pool = []
@@ -87,22 +87,42 @@ def compile_graph(
 
             coin_a: Coin = coin_permutation[0]
             coin_b: Coin = coin_permutation[1]
+            swap_involves_lp_token = coin_a.is_lp_token or coin_b.is_lp_token
 
-            # get indices of coin_a and coin_b:
-            i = pool["coins"].index(coin_a.address)
-            j = pool["coins"].index(coin_b.address)
+            # we extended coins_in_pool to include base_pool's lp_token and the
+            # individual coins in the base_pool on top of the metapool paired
+            # coin. Ignore all pairs between base_pool and its underlying
+            # because that's add/remove liquidity and not exchange:
+            if (
+                    is_metapool and
+                    swap_involves_lp_token and
+                    len(
+                        {coin_a, coin_b}.intersection(
+                            set(base_pool.coins)
+                        )
+                    ) > 0
+            ):
+                continue
 
-            # it is an underlying swap if either coin is a base_pool lp_token
-            is_underlying_swap = is_metapool and (
+            # it is an underlying swap if it is a metapool and lp token
+            # isn't being swapped:
+            is_underlying_swap = is_metapool and not (
                 coin_a.is_lp_token or coin_b.is_lp_token
             )
 
-            # get correct i and j for underlying swaps:
-            if is_underlying_swap and i == 0:  # going from asset to underlying
-                j = base_pool.index(coin_b)
-
-            if is_underlying_swap and j == 0:  # going from underlying to asset
-                i = base_pool.index(coin_a)
+            # get indices of coin_a and coin_b:
+            if not is_underlying_swap:
+                i = pool["coins"].index(coin_a.address)
+                j = pool["coins"].index(coin_b.address)
+            else:
+                i = 0
+                j = 0
+                if coin_a in base_pool.coins:
+                    i_base = base_pool.coins.index(coin_a)
+                    i = i_base + 1
+                if coin_b in base_pool.coins:
+                    j_base = base_pool.coins.index(coin_b)
+                    j = j_base + 1
 
             # make swap object:
             swap = Swap(
@@ -121,6 +141,6 @@ def compile_graph(
                 base_pool=pool["basePool"],
             )
 
-            path_finder.coin_map.add_pair(coin_a, coin_b, swap)
+            router.coin_map.add_pair(coin_a, coin_b, swap)
 
-    return path_finder
+    return router
