@@ -45,20 +45,3 @@ class Wrapper(Swap):
 
     wrap: bool
     is_wrapper: bool = True
-
-
-class CoinMap:
-    def __init__(self, coins: typing.List[str]):
-
-        self.number_of_coins = len(coins)
-        self.coins = coins
-        self.mapping = {coin: set() for coin in coins}
-        self.coin_pairs = {}
-
-    def add_pair(self, coin_a: Coin, coin_b: Coin, swap: Swap):
-
-        if coin_a not in self.mapping.keys():
-            self.mapping[coin_a] = set()
-
-        self.mapping[coin_a].add((coin_b, swap))
-        self.coin_pairs[(coin_a, coin_b)] = swap

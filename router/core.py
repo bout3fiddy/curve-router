@@ -1,6 +1,6 @@
 import typing
 
-from router.common import Coin, CoinMap
+from router.common import Coin, Swap
 
 
 class Router:
@@ -68,6 +68,15 @@ class Router:
             typing.List: _description_
         """
 
+        # if one of the coins is a lp token, it means both have a liquid pair
+        # on curve. so just return that pair:
+        pair = (coin_to_sell, target_coin_to_buy)
+        if (
+                (coin_to_sell.is_lp_token or target_coin_to_buy.is_lp_token)
+                and pair in self.coin_map.coin_pairs.keys()
+        ):
+            return [[coin_to_sell, target_coin_to_buy]]
+
         path = path + [coin_to_sell]
 
         if coin_to_sell == target_coin_to_buy:
@@ -79,6 +88,7 @@ class Router:
         if len(path) > max_hops:
             return []
 
+        # recursion here:
         paths = []
         for (coin, pool) in self.coin_map.mapping[coin_to_sell]:
             if coin not in path:
@@ -87,3 +97,20 @@ class Router:
                 )
 
         return paths
+
+
+class CoinMap:
+    def __init__(self, coins: typing.List[str]):
+
+        self.number_of_coins = len(coins)
+        self.coins = coins
+        self.mapping = {coin: set() for coin in coins}
+        self.coin_pairs = {}
+
+    def add_pair(self, coin_a: Coin, coin_b: Coin, swap: Swap):
+
+        if coin_a not in self.mapping.keys():
+            self.mapping[coin_a] = set()
+
+        self.mapping[coin_a].add((coin_b, swap))
+        self.coin_pairs[(coin_a, coin_b)] = swap
