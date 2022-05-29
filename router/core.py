@@ -1,6 +1,6 @@
 import typing
 
-from router.common import Coin, Swap
+from router.common import Swap
 
 
 class Router:
@@ -9,15 +9,15 @@ class Router:
 
     def get_routes(
         self,
-        coin_a: Coin,
-        coin_b: Coin,
+        coin_a: str,
+        coin_b: str,
         max_hops: int = 5,
     ) -> typing.List[typing.List[typing.Dict]]:
         """_summary_
 
         Args:
-            coin_a (Coin): _description_
-            coin_b (Coin): _description_
+            coin_a (str): _description_
+            coin_b (str): _description_
             max_hops (int, optional): _description_. Defaults to 5.
 
         Raises:
@@ -49,8 +49,8 @@ class Router:
 
     def _depth_first_search(
         self,
-        coin_to_sell: Coin,
-        target_coin_to_buy: Coin,
+        coin_to_sell: str,
+        target_coin_to_buy: str,
         path: typing.List,
         max_hops: int = 5,
     ) -> typing.List:
@@ -59,24 +59,14 @@ class Router:
         Inspiration: https://stackabuse.com/depth-first-search-dfs-in-python-theory-and-implementation/
 
         Args:
-            coin_to_sell (Coin): _description_
-            target_coin_to_buy (Coin): _description_
+            coin_to_sell (str): _description_
+            target_coin_to_buy (str): _description_
             path (typing.List): _description_
             max_hops (int, optional): _description_. Defaults to 5.
 
         Returns:
             typing.List: _description_
         """
-
-        # if one of the coins is a lp token, it means both have a liquid pair
-        # on curve. so just return that pair:
-        pair = (coin_to_sell, target_coin_to_buy)
-        if (
-                (coin_to_sell.is_lp_token or target_coin_to_buy.is_lp_token)
-                and pair in self.coin_map.coin_pairs.keys()
-        ):
-            return [[coin_to_sell, target_coin_to_buy]]
-
         path = path + [coin_to_sell]
 
         if coin_to_sell == target_coin_to_buy:
@@ -90,7 +80,7 @@ class Router:
 
         # recursion here:
         paths = []
-        for (coin, pool) in self.coin_map.mapping[coin_to_sell]:
+        for (coin, swap) in self.coin_map.mapping[coin_to_sell]:
             if coin not in path:
                 paths.extend(
                     self._depth_first_search(coin, target_coin_to_buy, path)
@@ -102,12 +92,10 @@ class Router:
 class CoinMap:
     def __init__(self, coins: typing.List[str]):
 
-        self.number_of_coins = len(coins)
-        self.coins = coins
         self.mapping = {coin: set() for coin in coins}
         self.coin_pairs = {}
 
-    def add_pair(self, coin_a: Coin, coin_b: Coin, swap: Swap):
+    def add_pair(self, coin_a: str, coin_b: str, swap: Swap):
 
         if coin_a not in self.mapping.keys():
             self.mapping[coin_a] = set()

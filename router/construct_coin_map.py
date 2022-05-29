@@ -2,7 +2,7 @@ import itertools
 import typing
 
 from router.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
-from router.common import BasePool, Coin, Swap
+from router.common import BasePool, Swap
 from router.core import Router
 from router.utils.constants import SUBGRAPH_API
 from utils.subgraph import get_latest_pool_coin_reserves, get_pool_data
@@ -17,7 +17,8 @@ def init_router(
 
     # query subgraph for pools in network_name
     data = get_pool_data(SUBGRAPH_API[network_name])
-    base_pool_tokens = [base_pool.lp_token.address for base_pool in base_pools]
+    base_pool_lp_tokens = [base_pool.lp_token for base_pool in base_pools]
+    print("Downloaded data from the graph.")
 
     # select pools with coins greater than RESERVE_THRESHOLD:
     vetted_pools = []
@@ -61,17 +62,7 @@ def init_router(
         pool_address = pool["address"]
         is_cryptoswap = pool["isV2"]
         is_metapool = pool["metapool"]
-
-        # get all coins in the pool:
-        coins_in_pool = []
-        for idx, coin in enumerate(pool["coins"]):
-            coin_dataclass = Coin(
-                address=coin,
-                network=network_name,
-                decimals=int(pool["coinDecimals"][idx]),
-                is_lp_token=coin in base_pool_tokens,
-            )
-            coins_in_pool.append(coin_dataclass)
+        coins_in_pool = pool["coins"]
 
         # if is_metapool, then find underlying coins and add them:
         base_pool = None
@@ -85,35 +76,37 @@ def init_router(
         coin_permutations = list(itertools.permutations(coins_in_pool))
         for coin_permutation in coin_permutations:
 
-            coin_a: Coin = coin_permutation[0]
-            coin_b: Coin = coin_permutation[1]
-            swap_involves_lp_token = coin_a.is_lp_token or coin_b.is_lp_token
+            coin_a = coin_permutation[0]
+            coin_b = coin_permutation[1]
 
             # we extended coins_in_pool to include base_pool's lp_token and the
             # individual coins in the base_pool on top of the metapool paired
             # coin. Ignore all pairs between base_pool and its underlying
             # because that's add/remove liquidity and not exchange:
+            swap_involves_basepool_lp_token = (
+                    coin_a in base_pool_lp_tokens or
+                    coin_b in base_pool_lp_tokens
+            )
+            swap_involves_basepool_underlying_token = (
+                len({coin_a, coin_b}.intersection(set(base_pool.coins))) > 0
+            )
             if (
                     is_metapool and
-                    swap_involves_lp_token and
-                    len(
-                        {coin_a, coin_b}.intersection(
-                            set(base_pool.coins)
-                        )
-                    ) > 0
+                    swap_involves_basepool_lp_token and
+                    swap_involves_basepool_underlying_token
             ):
                 continue
 
             # it is an underlying swap if it is a metapool and lp token
             # isn't being swapped:
-            is_underlying_swap = is_metapool and not (
-                coin_a.is_lp_token or coin_b.is_lp_token
+            is_underlying_swap = (
+                    is_metapool and not swap_involves_basepool_lp_token
             )
 
             # get indices of coin_a and coin_b:
             if not is_underlying_swap:
-                i = pool["coins"].index(coin_a.address)
-                j = pool["coins"].index(coin_b.address)
+                i = pool["coins"].index(coin_a)
+                j = pool["coins"].index(coin_b)
             else:
                 i = 0
                 j = 0
@@ -130,10 +123,8 @@ def init_router(
                 network=network_name,
                 i=i,
                 j=j,
-                coin_a=coin_a.address,
-                coin_a_decimals=coin_a.decimals,
-                coin_b=coin_b.address,
-                coin_b_decimals=coin_b.decimals,
+                coin_a=coin_a,
+                coin_b=coin_b,
                 is_cryptoswap=is_cryptoswap,
                 is_stableswap=not is_cryptoswap,
                 is_metapool=is_metapool,

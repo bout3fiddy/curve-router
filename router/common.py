@@ -2,23 +2,14 @@ import typing
 from dataclasses import dataclass
 
 
-class Coin(typing.NamedTuple):
-    """A dataclass cacheing some coin info and a few basic methods."""
-
-    address: str
-    network: str
-    decimals: int
-    is_lp_token: bool = False
-
-
 class BasePool(typing.NamedTuple):
     """A dataclass cacheing basepool lp token and coins in the base pool"""
 
     pool_address: str
-    lp_token: Coin
+    lp_token: str
     lp_token_decimals: int
     network: str
-    coins: typing.List[Coin]
+    coins: typing.List[str]
 
 
 @dataclass(frozen=True)
@@ -36,8 +27,6 @@ class Swap:
     j: int  # coin to swap to
     coin_a: str  # address
     coin_b: str  # address
-    coin_a_decimals: int
-    coin_b_decimals: int
 
 
 @dataclass(frozen=True)
