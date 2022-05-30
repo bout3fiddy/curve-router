@@ -48,9 +48,23 @@ def main(coin_in, coin_out, network_name, max_hops, max_shortest_paths):
         f"Took {t.interval} seconds."
     )
 
+    # remove all hops (greater than 1 swap) where any pool has been re-visited:
+    print("Removing all routes where a pool was re-visited ...")
+    with Timer() as t:
+        non_redundant_hops = []
+        for route in pruned_routes:
+            pools_in_route = [swap['pool'] for swap in route]
+            if len(list(set(pools_in_route))) != len(pools_in_route):
+                continue
+            non_redundant_hops.append(route)
+    print(
+        f"Num pools selected: {len(non_redundant_hops)}. "
+        f"Run took: {t.interval:.04f} seconds."
+    )
+
     # dump all routes in json file:
     json.dump(
-        pruned_routes,
+        non_redundant_hops,
         open(f"routes_{network_name}_{coin_in}_{coin_out}.json", "w"),
         sort_keys=True,
         indent="\t",
@@ -59,6 +73,5 @@ def main(coin_in, coin_out, network_name, max_hops, max_shortest_paths):
 
 
 if __name__ == "__main__":
-    with Timer() as t:
-        main()
-    print(f"Run took: {t.interval:.04f} seconds.")
+    main()
+

@@ -78,10 +78,10 @@ class Router:
         if len(path) > max_hops:
             return []
 
-        # recursion here:
+        # Recursion here. If swap is not visited yet, then visit:
         paths = []
         for (coin, swap) in self.coin_map.mapping[coin_to_sell]:
-            if coin not in path:
+            if swap not in path:
                 paths.extend(
                     self._depth_first_search(
                         coin, target_coin_to_buy, path, swap, max_hops
