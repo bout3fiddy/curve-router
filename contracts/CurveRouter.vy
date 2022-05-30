@@ -57,7 +57,7 @@ def get_dy_route(
     dy: uint256 = 0
     _dx: uint256 = dx
 
-    for idx in range(10):        
+    for idx in range(10):
 
         if pool_addresses[idx] == ZERO_ADDRESS:
             break
@@ -75,7 +75,7 @@ def get_dy_route(
 
         elif is_cryptoswap[idx]:
             dy = self._get_dy_cryptoswap(pool_addresses[idx], _dx, i[idx], j[idx])
-        
+
         _dx = dy
 
     return dy

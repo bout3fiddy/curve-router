@@ -1,12 +1,12 @@
 import itertools
 import typing
 
+from utils.subgraph import get_latest_pool_coin_reserves, get_pool_data
+
 from router.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
 from router.common import BasePool, Swap
 from router.core import Router
 from router.utils.constants import SUBGRAPH_API
-from utils.subgraph import get_latest_pool_coin_reserves, get_pool_data
-
 
 RESERVE_THRESHOLD = 100  # num coins of each type in the pool
 
@@ -84,23 +84,23 @@ def init_router(
             # coin. Ignore all pairs between base_pool and its underlying
             # because that's add/remove liquidity and not exchange:
             swap_involves_basepool_lp_token = (
-                    coin_a in base_pool_lp_tokens or
-                    coin_b in base_pool_lp_tokens
+                coin_a in base_pool_lp_tokens or coin_b in base_pool_lp_tokens
             )
             swap_involves_basepool_underlying_token = (
-                is_metapool and
-                len({coin_a, coin_b}.intersection(set(base_pool.coins))) > 0
+                is_metapool
+                and len({coin_a, coin_b}.intersection(set(base_pool.coins)))
+                > 0
             )
             if (
-                    swap_involves_basepool_lp_token and
-                    swap_involves_basepool_underlying_token
+                swap_involves_basepool_lp_token
+                and swap_involves_basepool_underlying_token
             ):
                 continue
 
             # it is an underlying swap if it is a metapool and lp token
             # isn't being swapped:
             is_underlying_swap = (
-                    is_metapool and not swap_involves_basepool_lp_token
+                is_metapool and not swap_involves_basepool_lp_token
             )
 
             # get indices of coin_a and coin_b:

@@ -35,7 +35,7 @@ class Router:
         )
 
         # construct the swap route for coin pair:
-        all_coin_routes = {i: [] for i in range(max_hops+1)}
+        all_coin_routes = {i: [] for i in range(max_hops + 1)}
         for coin_path in coin_paths:
             if len(coin_path) > max_hops:
                 continue

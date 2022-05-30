@@ -1,9 +1,10 @@
 import json
+
 import click
+from utils.misc import Timer
 
 from router.coins import THREECRV_BASEPOOL
 from router.construct_coin_map import init_router
-from utils.misc import Timer
 
 
 @click.command()

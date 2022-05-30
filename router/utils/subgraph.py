@@ -51,7 +51,7 @@ def get_num_swaps_pool(pool_addr, api, activity_duration: int = 365):
     """
     r = requests.post(api, json={"query": query})
     queried_data = dict(r.json())
-    if not "data" in queried_data:
+    if "data" not in queried_data:
         print("no data")
         return 0
     swap_events = queried_data["data"]["swapEvents"]
