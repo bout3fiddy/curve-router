@@ -1,4 +1,5 @@
 import typing
+import datetime
 from dataclasses import dataclass
 
 
@@ -27,6 +28,15 @@ class Swap:
     j: int  # coin to swap to
     coin_a: str  # address
     coin_b: str  # address
+
+
+@dataclass(frozen=True)
+class BestRoute:
+
+    last_updated: datetime.datetime
+    route: typing.List[Swap]
+    coin_in: str
+    coin_out: str
 
 
 @dataclass(frozen=True)

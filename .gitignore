@@ -136,3 +136,6 @@ reports/
 .DS_Store
 .idea
 **/.idea
+
+# routes
+routes_*.json

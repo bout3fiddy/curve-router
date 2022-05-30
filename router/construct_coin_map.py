@@ -73,11 +73,11 @@ def init_router(
                     break  # stores base pool dataclass in base_pool
 
         # update coin_map in path_finder:
-        coin_permutations = list(itertools.permutations(coins_in_pool))
-        for coin_permutation in coin_permutations:
+        coin_pairs = list(itertools.combinations(coins_in_pool, 2))
+        for coin_pair in coin_pairs:
 
-            coin_a = coin_permutation[0]
-            coin_b = coin_permutation[1]
+            coin_a = coin_pair[0]
+            coin_b = coin_pair[1]
 
             # we extended coins_in_pool to include base_pool's lp_token and the
             # individual coins in the base_pool on top of the metapool paired
@@ -88,10 +88,10 @@ def init_router(
                     coin_b in base_pool_lp_tokens
             )
             swap_involves_basepool_underlying_token = (
+                is_metapool and
                 len({coin_a, coin_b}.intersection(set(base_pool.coins))) > 0
             )
             if (
-                    is_metapool and
                     swap_involves_basepool_lp_token and
                     swap_involves_basepool_underlying_token
             ):

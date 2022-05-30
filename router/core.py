@@ -1,9 +1,12 @@
 import typing
+from datetime import datetime
 
 from router.common import Swap
 
 
 class Router:
+    last_updated: int = 0
+
     def __init__(self, coins: typing.List[str]):
         self.coin_map = CoinMap(coins)
 
@@ -12,7 +15,7 @@ class Router:
         coin_a: str,
         coin_b: str,
         max_hops: int = 5,
-    ) -> typing.List[typing.List[typing.Dict]]:
+    ) -> typing.Dict[int, typing.List[typing.Dict]]:
         """_summary_
 
         Args:
@@ -27,23 +30,18 @@ class Router:
             typing.List[typing.List[typing.Dict]]: _description_
         """
 
-        coin_paths = self._depth_first_search(coin_a, coin_b, [])
+        coin_paths = self._depth_first_search(
+            coin_a, coin_b, [], None, max_hops
+        )
 
         # construct the swap route for coin pair:
-        all_coin_routes = []
+        all_coin_routes = {i: [] for i in range(max_hops+1)}
         for coin_path in coin_paths:
-
-            coin_pairs_in_path = list(zip(coin_path, coin_path[1:]))
-            constructed_swap_route = [
-                self.coin_map.coin_pairs[coin_pair].__dict__
-                for coin_pair in coin_pairs_in_path
-            ]
-
-            if len(constructed_swap_route) > max_hops:
+            if len(coin_path) > max_hops:
                 continue
-
-            if constructed_swap_route not in all_coin_routes:
-                all_coin_routes.append(constructed_swap_route)
+            all_coin_routes[len(coin_path)].append(
+                [swap.__dict__ for swap in coin_path]
+            )
 
         return all_coin_routes
 
@@ -52,6 +50,7 @@ class Router:
         coin_to_sell: str,
         target_coin_to_buy: str,
         path: typing.List,
+        swap: typing.Optional[Swap] = None,
         max_hops: int = 5,
     ) -> typing.List:
         """_summary_
@@ -67,7 +66,8 @@ class Router:
         Returns:
             typing.List: _description_
         """
-        path = path + [coin_to_sell]
+        if swap:
+            path = path + [swap]
 
         if coin_to_sell == target_coin_to_buy:
             return [path]
@@ -83,22 +83,31 @@ class Router:
         for (coin, swap) in self.coin_map.mapping[coin_to_sell]:
             if coin not in path:
                 paths.extend(
-                    self._depth_first_search(coin, target_coin_to_buy, path)
+                    self._depth_first_search(
+                        coin, target_coin_to_buy, path, swap, max_hops
+                    )
                 )
 
         return paths
 
 
 class CoinMap:
+    last_updated: datetime
+
     def __init__(self, coins: typing.List[str]):
 
-        self.mapping = {coin: set() for coin in coins}
+        self.mapping = {coin: [] for coin in coins}
         self.coin_pairs = {}
 
     def add_pair(self, coin_a: str, coin_b: str, swap: Swap):
 
         if coin_a not in self.mapping.keys():
-            self.mapping[coin_a] = set()
+            self.mapping[coin_a] = []
 
-        self.mapping[coin_a].add((coin_b, swap))
-        self.coin_pairs[(coin_a, coin_b)] = swap
+        if (coin_a, coin_b) not in self.coin_pairs.keys():
+            self.coin_pairs[(coin_a, coin_b)] = []
+
+        self.mapping[coin_a].append((coin_b, swap))
+        self.coin_pairs[(coin_a, coin_b)].append(swap)
+
+        self.last_updated = datetime.utcnow()
