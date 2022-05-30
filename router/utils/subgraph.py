@@ -16,6 +16,14 @@ def get_pool_data(api: str):
                 isV2
                 metapool
                 basePool
+                dailyPoolSnapshots(
+                    first: 1,
+                    orderBy: timestamp,
+                    orderDirection: desc
+                ) {
+                    reserves
+                    reservesUsd
+                }
             }
         }
     }
@@ -24,56 +32,25 @@ def get_pool_data(api: str):
     data = dict(r.json())
     pool_data = data["data"]["platforms"][0]["pools"]
 
-    return pool_data
+    # de-nest pool data to include pool reserves
+    de_nested_pool_data = []
+    for _pool_data in pool_data:
+        latest_pool_snapshot = _pool_data['dailyPoolSnapshots'][0]
+        de_nested_pool_data.append(
+            {
+                'coins': _pool_data['coins'],
+                'coinDecimals': _pool_data['coinDecimals'],
+                'address': _pool_data['address'],
+                'isV2': _pool_data['isV2'],
+                'metapool': _pool_data['metapool'],
+                'basePool': _pool_data['basePool'],
+                'reserves': [
+                    float(i) for i in latest_pool_snapshot['reserves']
+                ],
+                'reservesUsd': [
+                    float(i) for i in latest_pool_snapshot['reservesUsd']
+                ],
+            }
+        )
 
-
-def get_num_swaps_pool(pool_addr, api, activity_duration: int = 365):
-
-    time_end = int(datetime.datetime.now().timestamp())
-    time_start = int(
-        datetime.datetime.now().timestamp() - 24 * 3600 * activity_duration
-    )
-
-    query = f"""
-    {{
-      swapEvents(
-        first: 1000,
-        where: {{
-          pool: "{pool_addr.lower()}"
-          timestamp_gte: {time_start}
-          timestamp_lt: {time_end}
-        }}
-      ) {{
-        timestamp
-        block
-      }}
-    }}
-    """
-    r = requests.post(api, json={"query": query})
-    queried_data = dict(r.json())
-    if "data" not in queried_data:
-        print("no data")
-        return 0
-    swap_events = queried_data["data"]["swapEvents"]
-    return len(swap_events)
-
-
-def get_latest_pool_coin_reserves(pool_addr, api):
-
-    query = f"""
-    {{
-      dailyPoolSnapshots(
-        first: 1,
-        orderBy: timestamp,
-        orderDirection: desc,
-        where:{{
-          pool: "{pool_addr.lower()}"
-        }}
-      ) {{
-        reserves
-      }}
-    }}
-    """
-    r = requests.post(api, json={"query": query})
-    queried_data = dict(r.json())["data"]["dailyPoolSnapshots"][0]["reserves"]
-    return [int(i) for i in queried_data]
+    return de_nested_pool_data

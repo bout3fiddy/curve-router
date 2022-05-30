@@ -30,11 +30,8 @@ def init_router(
         vetted_pools = []
         for pool_data in data:
 
-            pool_address = pool_data["address"]
             coin_decimals = [int(i) for i in pool_data["coinDecimals"]]
-            latest_coin_reserves = get_latest_pool_coin_reserves(
-                pool_addr=pool_address, api=SUBGRAPH_API[network_name]
-            )
+            latest_coin_reserves = pool_data['reserves']
             pool_reserve_critera_met = all(
                 [
                     reserves > RESERVE_THRESHOLD * 10 ** coin_decimals[idx]

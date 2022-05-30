@@ -30,7 +30,10 @@ def main(coin_in, coin_out, network_name, max_hops, max_shortest_paths):
     print(f"Finding routes for {coin_in} -> {coin_out}.")
     with Timer() as t:
         routes = path_finder.get_routes(coin_in, coin_out, max_hops=max_hops)
-    print(f"Found routes in {t.interval:0.4f} seconds.")
+    num_routes_found = sum(
+        [len(routes_for_hops) for n_hops, routes_for_hops in routes.items()]
+    )
+    print(f"Found {num_routes_found} routes in {t.interval:0.4f} seconds.")
 
     # select all routes for two shortest hops
     with Timer() as t:
