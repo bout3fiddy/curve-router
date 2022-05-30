@@ -1,6 +1,8 @@
 import itertools
+import time
 import typing
 
+from router.utils.misc import Timer
 from utils.subgraph import get_latest_pool_coin_reserves, get_pool_data
 
 from router.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
@@ -16,30 +18,39 @@ def init_router(
 ) -> Router:
 
     # query subgraph for pools in network_name
-    data = get_pool_data(SUBGRAPH_API[network_name])
+    with Timer() as t:
+        data = get_pool_data(SUBGRAPH_API[network_name])
+    print(f"Downloaded data from the graph. Took {t.interval:.04f} seconds.")
+
     base_pool_lp_tokens = [base_pool.lp_token for base_pool in base_pools]
-    print("Downloaded data from the graph.")
 
     # select pools with coins greater than RESERVE_THRESHOLD:
-    vetted_pools = []
-    for pool_data in data:
+    print("Removing illiquid pools ...")
+    with Timer() as t:
+        vetted_pools = []
+        for pool_data in data:
 
-        pool_address = pool_data["address"]
-        coin_decimals = [int(i) for i in pool_data["coinDecimals"]]
-        latest_coin_reserves = get_latest_pool_coin_reserves(
-            pool_addr=pool_address, api=SUBGRAPH_API[network_name]
-        )
-        pool_reserve_critera_met = all(
-            [
-                reserves > RESERVE_THRESHOLD * 10 ** coin_decimals[idx]
-                for idx, reserves in enumerate(latest_coin_reserves)
-            ]
-        )
+            pool_address = pool_data["address"]
+            coin_decimals = [int(i) for i in pool_data["coinDecimals"]]
+            latest_coin_reserves = get_latest_pool_coin_reserves(
+                pool_addr=pool_address, api=SUBGRAPH_API[network_name]
+            )
+            pool_reserve_critera_met = all(
+                [
+                    reserves > RESERVE_THRESHOLD * 10 ** coin_decimals[idx]
+                    for idx, reserves in enumerate(latest_coin_reserves)
+                ]
+            )
 
-        if not pool_reserve_critera_met:
-            continue
+            if not pool_reserve_critera_met:
+                continue
 
-        vetted_pools.append(pool_data)
+            vetted_pools.append(pool_data)
+
+    print(
+        f"Number of pools shortlisted: {len(vetted_pools)}. "
+        f"Took {t.interval:.04f} seconds."
+    )
 
     # get coins in vetted pools:
     all_coins_in_vetted_pools = []
@@ -57,6 +68,9 @@ def init_router(
     router.coin_map.add_pair(ETH, WETH, ETH_WETH_POOL)
 
     # add the rest of the pairs:
+    print("Adding coins into path finder's coin map...")
+    tic = time.perf_counter()
+    num_pairs = 0
     for pool in vetted_pools:
 
         pool_address = pool["address"]
@@ -97,6 +111,16 @@ def init_router(
             ):
                 continue
 
+            # if the pool is a metapool and both coins are in the base pool,
+            # then remove them (since the basepool is sufficient for those
+            # swaps):
+            if (
+                    is_metapool and
+                    coin_a in base_pool.coins and
+                    coin_b in base_pool.coins
+            ):
+                continue
+
             # it is an underlying swap if it is a metapool and lp token
             # isn't being swapped:
             is_underlying_swap = (
@@ -131,7 +155,9 @@ def init_router(
                 is_underlying_swap=is_underlying_swap,
                 base_pool=pool["basePool"],
             )
-
             router.coin_map.add_pair(coin_a, coin_b, swap)
+            num_pairs += 1
 
+    toc = time.perf_counter()
+    print(f"Added {num_pairs} pairs in {toc - tic:0.4f} seconds.\n")
     return router
