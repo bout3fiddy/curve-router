@@ -3,7 +3,7 @@ import time
 import typing
 
 from router.utils.misc import Timer
-from utils.subgraph import get_latest_pool_coin_reserves, get_pool_data
+from utils.subgraph import get_pool_data
 
 from router.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
 from router.common import BasePool, Swap
@@ -74,6 +74,7 @@ def init_router(
         is_cryptoswap = pool["isV2"]
         is_metapool = pool["metapool"]
         coins_in_pool = pool["coins"]
+        pool_reserves_usd = pool["reservesUsd"]
 
         # if is_metapool, then find underlying coins and add them:
         base_pool = None
@@ -128,7 +129,7 @@ def init_router(
             if not is_underlying_swap:
                 i = pool["coins"].index(coin_a)
                 j = pool["coins"].index(coin_b)
-            else:
+            else:  # underlying swap indices are different:
                 i = 0
                 j = 0
                 if coin_a in base_pool.coins:
@@ -151,6 +152,7 @@ def init_router(
                 is_metapool=is_metapool,
                 is_underlying_swap=is_underlying_swap,
                 base_pool=pool["basePool"],
+                pool_tvl_usd=sum(pool_reserves_usd)
             )
             router.coin_map.add_pair(coin_a, coin_b, swap)
             num_pairs += 1

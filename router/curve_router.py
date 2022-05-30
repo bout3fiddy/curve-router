@@ -1,4 +1,5 @@
 import json
+import pprint
 
 import click
 from utils.misc import Timer
@@ -18,13 +19,12 @@ def main(coin_in, coin_out, network_name, max_hops, max_shortest_paths):
     coin_in = coin_in.lower()
     coin_out = coin_out.lower()
 
-    print("Initialising path finder's coin map ...")
     # compile graph:
-    with Timer() as t:
-        path_finder = init_router(
-            network_name=network_name, base_pools=[THREECRV_BASEPOOL]
-        )
-    print(f"Path Finder coin map initialised. Took: {t.interval:0.4f} seconds.")
+    print("Initialising path finder's coin map ...\n")
+    path_finder = init_router(
+        network_name=network_name, base_pools=[THREECRV_BASEPOOL]
+    )
+    print(f"Path Finder coin map initialised.")
 
     # find all routes between coin_a and coin_b:
     print(f"Finding routes for {coin_in} -> {coin_out}.")
@@ -51,7 +51,7 @@ def main(coin_in, coin_out, network_name, max_hops, max_shortest_paths):
         f"Took {t.interval} seconds."
     )
 
-    # remove all hops (greater than 1 swap) where any pool has been re-visited:
+    # remove all hops where any pool has been re-visited:
     print("Removing all routes where a pool was re-visited ...")
     with Timer() as t:
         non_redundant_hops = []
@@ -65,9 +65,24 @@ def main(coin_in, coin_out, network_name, max_hops, max_shortest_paths):
         f"Run took: {t.interval:.04f} seconds."
     )
 
+    # todo: only select the pool with the most amount of liquidity in each pool
+    avg_route_liquidity = []
+    for route in non_redundant_hops:
+        route_liquidity = 0
+        for swap in route:
+            route_liquidity += swap['pool_tvl_usd']
+        avg_route_liquidity.append(route_liquidity / len(route))
+
+    most_liquid_route = non_redundant_hops[
+        avg_route_liquidity.index(max(avg_route_liquidity))
+    ]
+
+    print(f"Found most liquid route:")
+    pprint.pprint(most_liquid_route, indent=True)
+
     # dump all routes in json file:
     json.dump(
-        non_redundant_hops,
+        most_liquid_route,
         open(f"routes_{network_name}_{coin_in}_{coin_out}.json", "w"),
         sort_keys=True,
         indent="\t",

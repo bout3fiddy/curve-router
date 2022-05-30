@@ -28,6 +28,7 @@ class Swap:
     j: int  # coin to swap to
     coin_a: str  # address
     coin_b: str  # address
+    pool_tvl_usd: float
 
 
 @dataclass(frozen=True)
