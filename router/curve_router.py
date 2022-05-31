@@ -3,7 +3,7 @@ import pprint
 
 import click
 
-from router.coins import THREECRV_BASEPOOL
+from router.base_pools import BASE_POOLS
 from router.construct_coin_map import init_router
 from router.core import Router
 from router.misc import Timer
@@ -17,7 +17,7 @@ def print_verbose(statement: str, verbose: bool = True):
 def initialise(network_name: str, verbose: bool = False) -> Router:
     print_verbose("Initialising path finder's coin map ...\n", verbose)
     path_finder = init_router(
-        network_name=network_name, base_pools=[THREECRV_BASEPOOL]
+        network_name=network_name, base_pools=BASE_POOLS[network_name]
     )
     print_verbose("Path Finder coin map initialised.", verbose)
     return path_finder
