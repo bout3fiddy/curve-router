@@ -55,8 +55,6 @@ class Router:
     ) -> typing.List:
         """_summary_
 
-        Inspiration: https://stackabuse.com/depth-first-search-dfs-in-python-theory-and-implementation/
-
         Args:
             coin_to_sell (str): _description_
             target_coin_to_buy (str): _description_

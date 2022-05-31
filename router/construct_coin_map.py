@@ -2,13 +2,12 @@ import itertools
 import time
 import typing
 
-from router.utils.misc import Timer
-from utils.subgraph import get_pool_data
-
 from router.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
 from router.common import BasePool, Swap
+from router.constants import SUBGRAPH_API
 from router.core import Router
-from router.utils.constants import SUBGRAPH_API
+from router.misc import Timer
+from router.subgraph import get_pool_data
 
 RESERVE_THRESHOLD = 100  # num coins of each type in the pool
 
@@ -31,7 +30,7 @@ def init_router(
         for pool_data in data:
 
             coin_decimals = [int(i) for i in pool_data["coinDecimals"]]
-            latest_coin_reserves = pool_data['reserves']
+            latest_coin_reserves = pool_data["reserves"]
             pool_reserve_critera_met = all(
                 [
                     reserves > RESERVE_THRESHOLD * 10 ** coin_decimals[idx]
@@ -113,9 +112,9 @@ def init_router(
             # then remove them (since the basepool is sufficient for those
             # swaps):
             if (
-                    is_metapool and
-                    coin_a in base_pool.coins and
-                    coin_b in base_pool.coins
+                is_metapool
+                and coin_a in base_pool.coins
+                and coin_b in base_pool.coins
             ):
                 continue
 
@@ -152,7 +151,7 @@ def init_router(
                 is_metapool=is_metapool,
                 is_underlying_swap=is_underlying_swap,
                 base_pool=pool["basePool"],
-                pool_tvl_usd=sum(pool_reserves_usd)
+                pool_tvl_usd=sum(pool_reserves_usd),
             )
             router.coin_map.add_pair(coin_a, coin_b, swap)
             num_pairs += 1

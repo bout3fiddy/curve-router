@@ -28,7 +28,7 @@ WETH_ETH_POOL = Wrapper(
     i=0,
     j=0,
     wrap=False,
-    pool_tvl_usd=0  # this tvl doesn't count
+    pool_tvl_usd=0,  # this tvl doesn't count
 )
 ETH_WETH_POOL = Wrapper(
     pool="0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".lower(),
@@ -43,7 +43,7 @@ ETH_WETH_POOL = Wrapper(
     i=0,
     j=0,
     wrap=True,
-    pool_tvl_usd=0  # this tvl doesn't count
+    pool_tvl_usd=0,  # this tvl doesn't count
 )
 
 # ----- BasePools ----- #
