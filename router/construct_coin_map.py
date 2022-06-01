@@ -63,6 +63,56 @@ def init_router(
     router.coin_map.add_pair(WETH, ETH, WETH_ETH_POOL)
     router.coin_map.add_pair(ETH, WETH, ETH_WETH_POOL)
 
+    # add basepool add and remove liquidity options, but ignore this path later
+    for base_pool in base_pools:
+        lp_token = base_pool.lp_token
+        base_pool_addr = base_pool.pool_address
+        base_pool_reserves_usd = 0
+        for i in vetted_pools:
+            if i["address"] == base_pool_addr:
+                base_pool_reserves_usd = i["reservesUsd"]
+                break
+
+        # remove liquidity:
+        for j, coin in enumerate(base_pool.coins):
+
+            swap = Swap(
+                pool=base_pool_addr,
+                network=network_name,
+                i=-1,  # it is not a swap so input coin for add liquidity is -1
+                j=j,
+                coin_a=lp_token,
+                coin_b=coin,
+                is_cryptoswap=base_pool.is_cryptoswap,
+                is_stableswap=not base_pool.is_cryptoswap,
+                is_metapool=False,
+                is_underlying_swap=False,
+                is_remove_liquidity=True,
+                base_pool="0x0",
+                pool_tvl_usd=base_pool_reserves_usd,
+            )
+            router.coin_map.add_pair(lp_token, coin, swap)
+
+        # add liquidity:
+        for i, coin in enumerate(base_pool.coins):
+
+            swap = Swap(
+                pool=base_pool_addr,
+                network=network_name,
+                i=i,  # it is not a swap so input coin for add liquidity is -1
+                j=-1,
+                coin_a=coin,
+                coin_b=lp_token,
+                is_cryptoswap=base_pool.is_cryptoswap,
+                is_stableswap=not base_pool.is_cryptoswap,
+                is_metapool=False,
+                is_underlying_swap=False,
+                is_add_liquidity=True,
+                base_pool="0x0",
+                pool_tvl_usd=base_pool_reserves_usd,
+            )
+            router.coin_map.add_pair(coin, lp_token, swap)
+
     # add the rest of the pairs:
     print("Adding coins into path finder's coin map...")
     tic = time.perf_counter()

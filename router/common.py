@@ -12,6 +12,7 @@ class BasePool(typing.NamedTuple):
     network: str
     coins: typing.List[str]
     is_lending: bool = False
+    is_cryptoswap: bool = False
 
 
 @dataclass(frozen=True)
@@ -31,6 +32,8 @@ class Swap:
     coin_b: str  # address
     pool_tvl_usd: float
     is_lending_pool: bool = False
+    is_add_liquidity: bool = False  # lp token to coin in basepool
+    is_remove_liquidity: bool = False  # coin to lp token in basepool
 
 
 @dataclass(frozen=True)
