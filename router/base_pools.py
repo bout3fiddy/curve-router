@@ -158,7 +158,7 @@ renBTC_MATIC = "0xDBf31dF14B66535aF65AaC99C32e9eA844e14501".lower()
 TWOBTC_BASEPOOL_MATIC = BasePool(
     pool_address="0xC2d95EEF97Ec6C17551d45e77B590dc1F9117C67".lower(),
     lp_token=BTCCRV_MATIC_LP_TOKEN,
-    network="Fantom",
+    network="Matic",
     lp_token_decimals=18,
     coins=[WBTC_MATIC, renBTC_MATIC],
 )
@@ -166,14 +166,62 @@ TWOBTC_BASEPOOL_MATIC = BasePool(
 TWOBTC_BASEPOOL_MATIC_LENDING = BasePool(
     pool_address="0xC2d95EEF97Ec6C17551d45e77B590dc1F9117C67".lower(),
     lp_token=BTCCRV_MATIC_LP_TOKEN,
-    network="MATIC",
+    network="Matic",
     lp_token_decimals=18,
     coins=[amWBTC_MATIC, renBTC_MATIC],
     is_lending=True,
 )
 
 # ---- Avalanche ----
+av3CRV_TOKEN = "0x1337bedc9d22ecbe766df105c9623922a27963ec".lower()
 
+# Bridged versions of 3CRV stables
+DAI_AVAX_e = "0xd586E7F844cEa2F87f50152665BCbc2C279D8d70".lower()
+USDC_AVAX_e = "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664".lower()
+USDT_AVAX_e = "0xc7198437980c041c805A1EDcbA50c1Ce5db95118".lower()
+
+# gTOKENS
+avDAI_AVAX = "0x47AFa96Cdc9fAb46904A55a6ad4bf6660B53c38a".lower()
+avUSDC_AVAX = "0x46A51127C3ce23fb7AB1DE06226147F446e4a857".lower()
+avUSDT_AVAX = "0x532E6537FEA298397212F09A61e03311686f548e".lower()
+
+av3CRV_BASEPOOL_AVAX = BasePool(
+    pool_address="0x1337bedc9d22ecbe766df105c9623922a27963ec".lower(),
+    lp_token=av3CRV_TOKEN,
+    network="Avalanche",
+    lp_token_decimals=18,
+    coins=[DAI_AVAX_e, USDC_AVAX_e, USDT_AVAX_e],
+)
+av3CRV_BASEPOOL_AVAX_avTOKENS = BasePool(
+    pool_address="0x1337bedc9d22ecbe766df105c9623922a27963ec".lower(),
+    lp_token=av3CRV_TOKEN,
+    network="Avalanche",
+    lp_token_decimals=18,
+    coins=[avDAI_AVAX, avUSDC_AVAX, avUSDT_AVAX],
+    is_lending=True,
+)
+
+BTCCRV_AVAX_LP_TOKEN = "0xc2b1df84112619d190193e48148000e3990bf627".lower()
+WBTC_AVAX = "0x50b7545627a5162F82A992c33b87aDc75187B218".lower()
+avWBTC_AVAX = "0x686bEF2417b6Dc32C50a3cBfbCC3bb60E1e9a15D".lower()
+renBTC_AVAX = "0xDBf31dF14B66535aF65AaC99C32e9eA844e14501".lower()
+
+TWOBTC_BASEPOOL_AVAX = BasePool(
+    pool_address="0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90".lower(),
+    lp_token=BTCCRV_AVAX_LP_TOKEN,
+    network="Avalanche",
+    lp_token_decimals=18,
+    coins=[WBTC_AVAX, renBTC_AVAX],
+)
+
+TWOBTC_BASEPOOL_AVAX_LENDING = BasePool(
+    pool_address="0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90".lower(),
+    lp_token=BTCCRV_AVAX_LP_TOKEN,
+    network="Avalanche",
+    lp_token_decimals=18,
+    coins=[avWBTC_AVAX, renBTC_AVAX],
+    is_lending=True,
+)
 
 # ---- xDAI/Gnosis ----
 
@@ -199,6 +247,11 @@ BASE_POOLS = {
         TWOBTC_BASEPOOL_MATIC,
         TWOBTC_BASEPOOL_MATIC_LENDING,
     ],
-    "Avalanche": [],
+    "Avalanche": [
+        av3CRV_BASEPOOL_AVAX,
+        av3CRV_BASEPOOL_AVAX_avTOKENS,
+        TWOBTC_BASEPOOL_AVAX,
+        TWOBTC_BASEPOOL_AVAX_LENDING,
+    ],
     "xDAI": [],
 }
