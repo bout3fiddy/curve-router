@@ -50,14 +50,14 @@ def get_route(
     # select all routes for two shortest hops
     with Timer() as t:
         pruned_routes = []
-        c = -1
+        c = 0
         for n_hop, routes_for_n_hops in routes.items():
-            c += 1
             if len(routes_for_n_hops) == 0:
                 continue
             if c > max_shortest_paths:
                 break
             pruned_routes.extend(routes_for_n_hops)
+            c += 1
     print_verbose(
         f"Selecting {len(pruned_routes)} routes for the next step. "
         f"Took {t.interval} seconds.",
@@ -83,20 +83,16 @@ def get_route(
 
     # Select the route with the highest average liquidity. This is a proxy for
     # minimising slippage:
-    avg_route_liquidity = []
+    min_route_liquidity = []
     for route in non_redundant_hops:
-        route_liquidity = 0
-        for swap in route:
-            route_liquidity += swap["pool_tvl_usd"]
-        avg_route_liquidity.append(route_liquidity / len(route))
+        route_liquidity = [swap["pool_tvl_usd"] for swap in route]
+        min_route_liquidity.append(min(route_liquidity))
 
-    most_liquid_route = non_redundant_hops[
-        avg_route_liquidity.index(max(avg_route_liquidity))
+    least_illiquid_route = non_redundant_hops[
+        min_route_liquidity.index(max(min_route_liquidity))
     ]
 
-    print_verbose("Found most liquid route:", verbose)
-    pprint.pprint(most_liquid_route, indent=True)
-    return most_liquid_route
+    return least_illiquid_route
 
 
 @click.command()
@@ -117,7 +113,7 @@ def main(
     # initialise coin map:
     path_finder = initialise(network_name)
 
-    most_liquid_route = get_route(
+    least_illiquid_route = get_route(
         coin_in=coin_in,
         coin_out=coin_out,
         path_finder=path_finder,
@@ -126,13 +122,13 @@ def main(
         verbose=True,
     )
 
-    print("Found most liquid route:")
-    pprint.pprint(most_liquid_route, indent=True)
+    print("Found least illiquid route:")
+    pprint.pprint(least_illiquid_route, indent=True)
 
     # dump all routes in json file:
     if write_to_json:
         json.dump(
-            most_liquid_route,
+            least_illiquid_route,
             open(f"routes_{network_name}_{coin_in}_{coin_out}.json", "w"),
             sort_keys=True,
             indent="\t",

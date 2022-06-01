@@ -89,7 +89,7 @@ def init_router(
                 is_underlying_swap=False,
                 is_remove_liquidity=True,
                 base_pool="0x0",
-                pool_tvl_usd=base_pool_reserves_usd,
+                pool_tvl_usd=sum(base_pool_reserves_usd),
             )
             router.coin_map.add_pair(lp_token, coin, swap)
 
@@ -109,7 +109,7 @@ def init_router(
                 is_underlying_swap=False,
                 is_add_liquidity=True,
                 base_pool="0x0",
-                pool_tvl_usd=base_pool_reserves_usd,
+                pool_tvl_usd=sum(base_pool_reserves_usd),
             )
             router.coin_map.add_pair(coin, lp_token, swap)
 
