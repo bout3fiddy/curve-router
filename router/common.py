@@ -48,5 +48,5 @@ class BestRoute:
 @dataclass(frozen=True)
 class Wrapper(Swap):
 
-    wrap: bool
+    wrap: bool = False
     is_wrapper: bool = True

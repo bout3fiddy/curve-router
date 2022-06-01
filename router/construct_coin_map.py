@@ -2,12 +2,12 @@ import itertools
 import time
 import typing
 
-from router.coins import ETH, ETH_WETH_POOL, WETH, WETH_ETH_POOL
 from router.common import BasePool, Swap
-from router.constants import SUBGRAPH_API
+from router.constants import ETH, SUBGRAPH_API, WETH
 from router.core import Router
 from router.misc import Timer
 from router.subgraph import get_pool_data
+from router.wrappers import ETH_WETH_POOL, WETH_ETH_POOL
 
 RESERVE_THRESHOLD = 100  # num coins of each type in the pool
 
