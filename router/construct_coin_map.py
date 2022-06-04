@@ -7,7 +7,6 @@ from router.constants import ETH, SUBGRAPH_API, WETH
 from router.core import Router
 from router.misc import Timer
 from router.subgraph import get_pool_data
-from router.wrappers import ETH_WETH_POOL, WETH_ETH_POOL
 
 RESERVE_THRESHOLD = 100  # num coins of each type in the pool
 
@@ -58,10 +57,6 @@ def init_router(
 
     # init coin map:
     router = Router(all_coins_in_vetted_pools)
-
-    # add weth <-> eth wrapper contract:
-    router.coin_map.add_pair(WETH, ETH, WETH_ETH_POOL)
-    router.coin_map.add_pair(ETH, WETH, ETH_WETH_POOL)
 
     # add basepool add and remove liquidity options, but ignore this path later
     for base_pool in base_pools:
@@ -184,13 +179,25 @@ def init_router(
                 if coin_a in base_pool.coins:
                     i_base = base_pool.coins.index(coin_a)
                     i = i_base + 1
+                    # if it is an underlying swap and it is a metapool with a
+                    # lending basepool, then our underlying swaps from the pool
+                    # itself will go straight to the aToken and not the Token.
+                    if base_pool.is_lending:
+                        coin_a = base_pool.underlying_coins[i_base]
                 if coin_b in base_pool.coins:
                     j_base = base_pool.coins.index(coin_b)
                     j = j_base + 1
+                    if base_pool.is_lending:
+                        coin_b = base_pool.underlying_coins[j_base]
+
+            zap_address = ""
+            if base_pool.is_lending:
+                zap_address = base_pool.zap_address
 
             # make swap object:
             swap = Swap(
                 pool=pool_address,
+                zap_address=zap_address,
                 network=network_name,
                 i=i,
                 j=j,

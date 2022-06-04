@@ -9,7 +9,6 @@ THREECRV_BASEPOOL_MAINNET = BasePool(
     pool_address="0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7".lower(),
     lp_token=THREECRV_TOKEN_MAINNET,
     network="Mainnet",
-    lp_token_decimals=18,
     coins=[DAI, USDC, USDT],  # this is also how coin indices are arranged
 )
 
@@ -23,7 +22,6 @@ THREEBTC_BASEPOOL_MAINNET = BasePool(
     pool_address="0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714".lower(),
     lp_token=crvrenBTC_wBTC_sBTC_TOKEN,
     network="Mainnet",
-    lp_token_decimals=18,
     coins=[renbBTC, wBTC, sBTC],  # this is also how coin indices are arranged
 )
 
@@ -32,7 +30,6 @@ TWOBTC_BASEPOOL_MAINNET = BasePool(
     pool_address="0x93054188d876f558f4a66B2EF1d97d16eDf0895B".lower(),
     lp_token=crvrenBTC_wBTC_TOKEN,
     network="Mainnet",
-    lp_token_decimals=18,
     coins=[renbBTC, wBTC],  # this is also how coin indices are arranged
 )
 
@@ -44,7 +41,6 @@ TWOCRV_BASEPOOL_ARBITRUM = BasePool(
     pool_address=TWOCRV_TOKEN_ARBITRUM,
     lp_token=TWOCRV_TOKEN_ARBITRUM,
     network="Arbitrum",
-    lp_token_decimals=18,
     coins=[USDC_ARB, USDT_ARB],  # this is also how coin indices are arranged
 )
 
@@ -55,7 +51,6 @@ TWOBTC_BASEPOOL_ARBITRUM = BasePool(
     pool_address=TWOBTC_TOKEN_ARBITRUM,
     lp_token=TWOBTC_TOKEN_ARBITRUM,
     network="Arbitrum",
-    lp_token_decimals=18,
     coins=[wBTC_ARB, renBTC_ARB],  # this is also how coin indices are arranged
 )
 
@@ -68,57 +63,7 @@ THREECRV_BASEPOOL_OPTIMISM = BasePool(
     pool_address=THREECRV_TOKEN_OPTIMISM,
     lp_token=THREECRV_TOKEN_OPTIMISM,
     network="Optimism",
-    lp_token_decimals=18,
     coins=[DAI_OPTIMISM, USDC_OPTIMISM, USDT_OPTIMISM],
-)
-
-# ---- Fantom ----
-G3CRV_TOKEN = "0xD02a30d33153877BC20e5721ee53DeDEE0422B2F".lower()
-
-# MultiChain bridged versions of 3CRV stables
-DAI_FANTOM = "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E".lower()
-USDC_FANTOM = "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75".lower()
-fUSDT_FANTOM = "0x049d68029688eAbF473097a2fC38ef61633A3C7A".lower()
-
-# gTOKENS
-gDAI_FANTOM = "0x07E6332dD090D287d3489245038daF987955DCFB".lower()
-gUSDC_FANTOM = "0xe578C856933D8e1082740bf7661e379Aa2A30b26".lower()
-gfUSDT_FANTOM = "0x940F41F0ec9ba1A34CF001cc03347ac092F5F6B5".lower()
-
-G3CRV_BASEPOOL_FANTOM = BasePool(
-    pool_address="0x0fa949783947Bf6c1b171DB13AEACBB488845B3f".lower(),
-    lp_token=G3CRV_TOKEN,
-    network="Fantom",
-    lp_token_decimals=18,
-    coins=[DAI_FANTOM, USDC_FANTOM, fUSDT_FANTOM],
-)
-G3CRV_BASEPOOL_FANTOM_gTOKENS = BasePool(
-    pool_address="0x0fa949783947Bf6c1b171DB13AEACBB488845B3f".lower(),
-    lp_token=G3CRV_TOKEN,
-    network="Fantom",
-    lp_token_decimals=18,
-    coins=[gDAI_FANTOM, gUSDC_FANTOM, gfUSDT_FANTOM],
-    is_lending=True,
-)
-
-TWOCRV_TOKEN_FANTOM = "0x27E611FD27b276ACbd5Ffd632E5eAEBEC9761E40".lower()
-TWOCRV_BASEPOOL_FANTOM = BasePool(
-    pool_address=TWOCRV_TOKEN_FANTOM,
-    lp_token=TWOCRV_TOKEN_FANTOM,
-    network="Fantom",
-    lp_token_decimals=18,
-    coins=[DAI_FANTOM, USDC_FANTOM],
-)
-
-BTCCRV_FANTOM_LP_TOKEN = "0x5B5CFE992AdAC0C9D48E05854B2d91C73a003858".lower()
-MULTICHAIN_WBTC_FANTOM = "0x321162Cd933E2Be498Cd2267a90534A804051b11".lower()
-renBTC_FANTOM = "0xDBf31dF14B66535aF65AaC99C32e9eA844e14501".lower()
-TWOBTC_BASEPOOL_FANTOM = BasePool(
-    pool_address="0x3eF6A01A0f81D6046290f3e2A8c5b843e738E604".lower(),
-    lp_token=BTCCRV_FANTOM_LP_TOKEN,
-    network="Fantom",
-    lp_token_decimals=18,
-    coins=[MULTICHAIN_WBTC_FANTOM, renBTC_FANTOM],
 )
 
 # ---- Matic/Polygon ----
@@ -136,17 +81,11 @@ amUSDT_MATIC = "0x60D55F02A771d515e077c9C2403a1ef324885CeC".lower()
 
 am3CRV_BASEPOOL_MATIC = BasePool(
     pool_address="0x445FE580eF8d70FF569aB36e80c647af338db351".lower(),
+    zap_address="0x5ab5C56B9db92Ba45a0B46a207286cD83C15C939".lower(),
     lp_token=am3CRV_TOKEN,
     network="Matic",
-    lp_token_decimals=18,
     coins=[DAI_MATIC, USDC_MATIC, USDT_MATIC],
-)
-am3CRV_BASEPOOL_MATIC_amTOKENS = BasePool(
-    pool_address="0x445FE580eF8d70FF569aB36e80c647af338db351".lower(),
-    lp_token=am3CRV_TOKEN,
-    network="Matic",
-    lp_token_decimals=18,
-    coins=[amDAI_MATIC, amUSDC_MATIC, amUSDT_MATIC],
+    underlying_coins=[amDAI_MATIC, amUSDC_MATIC, amUSDT_MATIC],
     is_lending=True,
 )
 
@@ -157,18 +96,11 @@ renBTC_MATIC = "0xDBf31dF14B66535aF65AaC99C32e9eA844e14501".lower()
 
 TWOBTC_BASEPOOL_MATIC = BasePool(
     pool_address="0xC2d95EEF97Ec6C17551d45e77B590dc1F9117C67".lower(),
+    zap_address="0xE2e6DC1708337A6e59f227921db08F21e3394723".lower(),
     lp_token=BTCCRV_MATIC_LP_TOKEN,
     network="Matic",
-    lp_token_decimals=18,
     coins=[WBTC_MATIC, renBTC_MATIC],
-)
-
-TWOBTC_BASEPOOL_MATIC_LENDING = BasePool(
-    pool_address="0xC2d95EEF97Ec6C17551d45e77B590dc1F9117C67".lower(),
-    lp_token=BTCCRV_MATIC_LP_TOKEN,
-    network="Matic",
-    lp_token_decimals=18,
-    coins=[amWBTC_MATIC, renBTC_MATIC],
+    underlying_coins=[amWBTC_MATIC, renBTC_MATIC],
     is_lending=True,
 )
 
@@ -187,17 +119,11 @@ avUSDT_AVAX = "0x532E6537FEA298397212F09A61e03311686f548e".lower()
 
 av3CRV_BASEPOOL_AVAX = BasePool(
     pool_address="0x1337bedc9d22ecbe766df105c9623922a27963ec".lower(),
+    zap_address="0x001E3BA199B4FF4B5B6e97aCD96daFC0E2e4156e".lower(),
     lp_token=av3CRV_TOKEN,
     network="Avalanche",
-    lp_token_decimals=18,
     coins=[DAI_AVAX_e, USDC_AVAX_e, USDT_AVAX_e],
-)
-av3CRV_BASEPOOL_AVAX_avTOKENS = BasePool(
-    pool_address="0x1337bedc9d22ecbe766df105c9623922a27963ec".lower(),
-    lp_token=av3CRV_TOKEN,
-    network="Avalanche",
-    lp_token_decimals=18,
-    coins=[avDAI_AVAX, avUSDC_AVAX, avUSDT_AVAX],
+    underlying_coins=[avDAI_AVAX, avUSDC_AVAX, avUSDT_AVAX],
     is_lending=True,
 )
 
@@ -208,19 +134,53 @@ renBTC_AVAX = "0xDBf31dF14B66535aF65AaC99C32e9eA844e14501".lower()
 
 TWOBTC_BASEPOOL_AVAX = BasePool(
     pool_address="0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90".lower(),
+    zap_address="0xEeB3DDBcc4174e0b3fd1C13aD462b95D11Ef42C3".lower(),
     lp_token=BTCCRV_AVAX_LP_TOKEN,
     network="Avalanche",
-    lp_token_decimals=18,
     coins=[WBTC_AVAX, renBTC_AVAX],
+    underlying_coins=[avWBTC_AVAX, renBTC_AVAX],
+    is_lending=True,
 )
 
-TWOBTC_BASEPOOL_AVAX_LENDING = BasePool(
-    pool_address="0x16a7DA911A4DD1d83F3fF066fE28F3C792C50d90".lower(),
-    lp_token=BTCCRV_AVAX_LP_TOKEN,
-    network="Avalanche",
-    lp_token_decimals=18,
-    coins=[avWBTC_AVAX, renBTC_AVAX],
+# ---- Fantom ----
+G3CRV_TOKEN = "0xD02a30d33153877BC20e5721ee53DeDEE0422B2F".lower()
+
+# MultiChain bridged versions of 3CRV stables
+DAI_FANTOM = "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E".lower()
+USDC_FANTOM = "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75".lower()
+fUSDT_FANTOM = "0x049d68029688eAbF473097a2fC38ef61633A3C7A".lower()
+
+# gTOKENS
+gDAI_FANTOM = "0x07E6332dD090D287d3489245038daF987955DCFB".lower()
+gUSDC_FANTOM = "0xe578C856933D8e1082740bf7661e379Aa2A30b26".lower()
+gfUSDT_FANTOM = "0x940F41F0ec9ba1A34CF001cc03347ac092F5F6B5".lower()
+
+G3CRV_BASEPOOL_FANTOM = BasePool(
+    pool_address="0x0fa949783947Bf6c1b171DB13AEACBB488845B3f".lower(),
+    zap_address="0x78D51EB71a62c081550EfcC0a9F9Ea94B2Ef081c".lower(),
+    lp_token=G3CRV_TOKEN,
+    network="Fantom",
+    coins=[DAI_FANTOM, USDC_FANTOM, fUSDT_FANTOM],
+    underlying_coins=[gDAI_FANTOM, gUSDC_FANTOM, gfUSDT_FANTOM],
     is_lending=True,
+)
+
+TWOCRV_TOKEN_FANTOM = "0x27E611FD27b276ACbd5Ffd632E5eAEBEC9761E40".lower()
+TWOCRV_BASEPOOL_FANTOM = BasePool(
+    pool_address=TWOCRV_TOKEN_FANTOM,
+    lp_token=TWOCRV_TOKEN_FANTOM,
+    network="Fantom",
+    coins=[DAI_FANTOM, USDC_FANTOM],
+)
+
+BTCCRV_FANTOM_LP_TOKEN = "0x5B5CFE992AdAC0C9D48E05854B2d91C73a003858".lower()
+MULTICHAIN_WBTC_FANTOM = "0x321162Cd933E2Be498Cd2267a90534A804051b11".lower()
+renBTC_FANTOM = "0xDBf31dF14B66535aF65AaC99C32e9eA844e14501".lower()
+TWOBTC_BASEPOOL_FANTOM = BasePool(
+    pool_address="0x3eF6A01A0f81D6046290f3e2A8c5b843e738E604".lower(),
+    lp_token=BTCCRV_FANTOM_LP_TOKEN,
+    network="Fantom",
+    coins=[MULTICHAIN_WBTC_FANTOM, renBTC_FANTOM],
 )
 
 # ---- xDAI/Gnosis ----
@@ -235,23 +195,18 @@ BASE_POOLS = {
     ],
     "Arbitrum": [TWOCRV_BASEPOOL_ARBITRUM, TWOBTC_BASEPOOL_ARBITRUM],
     "Optimism": [THREECRV_BASEPOOL_OPTIMISM],
-    "Fantom": [
-        G3CRV_BASEPOOL_FANTOM,
-        G3CRV_BASEPOOL_FANTOM_gTOKENS,
-        TWOCRV_BASEPOOL_FANTOM,
-        TWOBTC_BASEPOOL_FANTOM,
-    ],
     "Matic": [
         am3CRV_BASEPOOL_MATIC,
-        am3CRV_BASEPOOL_MATIC_amTOKENS,
         TWOBTC_BASEPOOL_MATIC,
-        TWOBTC_BASEPOOL_MATIC_LENDING,
     ],
     "Avalanche": [
         av3CRV_BASEPOOL_AVAX,
-        av3CRV_BASEPOOL_AVAX_avTOKENS,
         TWOBTC_BASEPOOL_AVAX,
-        TWOBTC_BASEPOOL_AVAX_LENDING,
+    ],
+    "Fantom": [
+        G3CRV_BASEPOOL_FANTOM,
+        TWOCRV_BASEPOOL_FANTOM,
+        TWOBTC_BASEPOOL_FANTOM,
     ],
     "xDAI": [],
 }

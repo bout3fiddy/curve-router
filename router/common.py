@@ -1,4 +1,3 @@
-import datetime
 import typing
 from dataclasses import dataclass
 
@@ -8,11 +7,16 @@ class BasePool(typing.NamedTuple):
 
     pool_address: str
     lp_token: str
-    lp_token_decimals: int
     network: str
-    coins: typing.List[str]
+    coins: typing.List[str]  # if lending: underlying is e.g. aDAI or gDAI
     is_lending: bool = False
     is_cryptoswap: bool = False
+    # if lending: underlying is e.g. DAI
+    underlying_coins: typing.List[str] = []
+    # if meta lending factory pool, then `exchange_underlying` yields aTokens
+    # and not underlying_coins. So there exists a separate contract for
+    # swaps, called the zap depositor.
+    zap_address: str = ""
 
 
 @dataclass(frozen=True)
@@ -34,19 +38,4 @@ class Swap:
     is_lending_pool: bool = False
     is_add_liquidity: bool = False  # lp token to coin in basepool
     is_remove_liquidity: bool = False  # coin to lp token in basepool
-
-
-@dataclass(frozen=True)
-class BestRoute:
-
-    last_updated: datetime.datetime
-    route: typing.List[Swap]
-    coin_in: str
-    coin_out: str
-
-
-@dataclass(frozen=True)
-class Wrapper(Swap):
-
-    wrap: bool = False
-    is_wrapper: bool = True
+    zap_address: str = ""  # contract for meta factory lending pools

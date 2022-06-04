@@ -10,29 +10,67 @@ MAX_HOPS = 4
 
 def get_swap_type(
     is_stableswap: bool,
+    num_coins_in_pool: int,  # todo: add num coins in pool here
     is_metapool: bool,
     is_lending_pool: bool,
     is_underlying_swap: bool,
     is_add_liquidity: bool,
     is_remove_liquidity: bool,
     is_cryptoswap: bool,
+    is_poly_meta_zap: bool,
+    network: str = "Mainnet"
 ):
 
-    swap_type = -1
+    swap_type = 0
+    is_add_remove_liquidity = is_add_liquidity or is_remove_liquidity
+    is_pure_exchange = not (is_underlying_swap or is_add_remove_liquidity)
 
     # swap_type is 1. applicable to stableswap `exchange` method.
-    if (
-        is_stableswap
-        or is_metapool
-        or is_lending_pool
-        and not (
-            is_underlying_swap
-            and is_add_liquidity
-            and is_remove_liquidity
-            and is_cryptoswap
-        )
-    ):
+    if is_stableswap and is_pure_exchange:
         swap_type = 1
+
+    elif is_stableswap and is_underlying_swap:
+        swap_type = 2
+
+    elif is_cryptoswap and is_pure_exchange:
+        swap_type = 3
+
+    elif is_cryptoswap and is_underlying_swap:
+        swap_type = 4
+
+    elif (
+            network == "Matic" and
+            is_metapool and
+            is_stableswap and
+            is_underlying_swap and
+            is_poly_meta_zap
+    ):
+        swap_type = 5
+
+    elif is_stableswap and is_add_liquidity and num_coins_in_pool == 2:
+        swap_type = 6
+
+    elif is_stableswap and is_add_liquidity and num_coins_in_pool == 3:
+        swap_type = 7
+
+    elif (
+            is_stableswap and
+            is_add_liquidity and
+            is_lending_pool and
+            network == "Matic"
+    ):
+        swap_type = 8
+
+    elif is_stableswap and is_remove_liquidity:
+        swap_type = 9
+
+    elif (
+            is_stableswap and
+            is_remove_liquidity and
+            is_lending_pool and
+            network == "Matic"
+    ):
+        swap_type = 10
 
     return swap_type
 
