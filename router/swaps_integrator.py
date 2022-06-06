@@ -12,37 +12,34 @@ def get_swap_type(
     is_stableswap: bool,
     num_coins_in_pool: int,  # todo: add num coins in pool here
     is_metapool: bool,
-    is_lending_pool: bool,
-    is_underlying_swap: bool,
+    is_underlying: bool,
     is_add_liquidity: bool,
     is_remove_liquidity: bool,
     is_cryptoswap: bool,
     is_poly_meta_zap: bool,
-    network: str = "Mainnet"
 ):
 
     swap_type = 0
     is_add_remove_liquidity = is_add_liquidity or is_remove_liquidity
-    is_pure_exchange = not (is_underlying_swap or is_add_remove_liquidity)
+    is_pure_exchange = not (is_underlying or is_add_remove_liquidity)
 
     # swap_type is 1. applicable to stableswap `exchange` method.
     if is_stableswap and is_pure_exchange:
         swap_type = 1
 
-    elif is_stableswap and is_underlying_swap:
+    elif is_stableswap and is_underlying:
         swap_type = 2
 
     elif is_cryptoswap and is_pure_exchange:
         swap_type = 3
 
-    elif is_cryptoswap and is_underlying_swap:
+    elif is_cryptoswap and is_underlying:
         swap_type = 4
 
     elif (
-            network == "Matic" and
             is_metapool and
             is_stableswap and
-            is_underlying_swap and
+            is_underlying and
             is_poly_meta_zap
     ):
         swap_type = 5
@@ -56,8 +53,8 @@ def get_swap_type(
     elif (
             is_stableswap and
             is_add_liquidity and
-            is_lending_pool and
-            network == "Matic"
+            num_coins_in_pool == 3 and
+            is_underlying
     ):
         swap_type = 8
 
@@ -67,8 +64,7 @@ def get_swap_type(
     elif (
             is_stableswap and
             is_remove_liquidity and
-            is_lending_pool and
-            network == "Matic"
+            is_underlying
     ):
         swap_type = 10
 
@@ -129,18 +125,21 @@ def convert_route_to_swaps_input(
         # get _swap_params:
         i = hop["i"]
         j = hop["j"]
+
         swap_type = get_swap_type(
-            is_stableswap=hop["is_stableswap"] == "true",
-            is_add_liquidity=hop["is_add_liquidity"] == "true",
-            is_remove_liquidity=hop["is_remove_liquidity"] == "true",
-            is_metapool=hop["is_metapool"] == "true",
-            is_cryptoswap=hop["is_cryptoswap"] == "true",
-            is_lending_pool=hop["is_lending_pool"] == "true",
-            is_underlying_swap=hop["is_underlying_swap"] == "true",
+            is_stableswap=hop["is_stableswap"],
+            is_add_liquidity=hop["is_add_liquidity"],
+            is_remove_liquidity=hop["is_remove_liquidity"],
+            is_metapool=hop["is_metapool"],
+            is_cryptoswap=hop["is_cryptoswap"],
+            is_underlying=hop["is_underlying"],
+            is_poly_meta_zap=hop["zap_address"] is not ZERO_ADDRESS,
+            num_coins_in_pool=hop["num_coins_pool"]
         )
         swaps_input["_swap_params"].append([i, j, swap_type])
 
-        # todo: get _pools for swaps via zap contracts
+        # get _pool (zap address):
+        swaps_input["_pools"].append(hop["zap_address"])
 
     # pad with ZERO_ADDRESS:
     swaps_input["_route"] += [ZERO_ADDRESS] * (
@@ -169,7 +168,8 @@ def main():
         verbose=True,
     )
 
-    convert_route_to_swaps_input(least_illiquid_route)
+    swaps_input = convert_route_to_swaps_input(least_illiquid_route)
+    print(swaps_input)
 
 
 if __name__ == "__main__":

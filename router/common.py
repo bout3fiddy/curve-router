@@ -1,5 +1,6 @@
 import typing
 from dataclasses import dataclass
+from brownie import ZERO_ADDRESS
 
 
 class BasePool(typing.NamedTuple):
@@ -16,7 +17,7 @@ class BasePool(typing.NamedTuple):
     # if meta lending factory pool, then `exchange_underlying` yields aTokens
     # and not underlying_coins. So there exists a separate contract for
     # swaps, called the zap depositor.
-    zap_address: str = ""
+    zap_address: str = ZERO_ADDRESS
 
 
 @dataclass(frozen=True)
@@ -29,13 +30,15 @@ class Swap:
     is_stableswap: bool
     is_metapool: bool
     base_pool: str  # address
-    is_underlying_swap: bool
+    is_underlying: bool
     i: int  # coin to swap from
     j: int  # coin to swap to
     coin_a: str  # address
     coin_b: str  # address
     pool_tvl_usd: float
+    num_coins_pool: float
     is_lending_pool: bool = False
     is_add_liquidity: bool = False  # lp token to coin in basepool
     is_remove_liquidity: bool = False  # coin to lp token in basepool
-    zap_address: str = ""  # contract for meta factory lending pools
+    zap_address: str = ZERO_ADDRESS  # contract for meta factory lending pools
+    use_eth: bool = True  # if cryptoswap then use eth and not weth

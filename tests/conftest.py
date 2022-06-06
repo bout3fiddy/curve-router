@@ -1,6 +1,7 @@
 import pytest
-from brownie import Swaps, accounts
+from brownie import Swaps, ZERO_ADDRESS, accounts
 
+from router.constants import ADDRESS_PROVIDER
 from router.curve_router import initialise
 
 
@@ -10,8 +11,8 @@ def alice():
 
 
 @pytest.fixture(scope="session")
-def curve_router(alice):
-    return Swaps.deploy({"from": alice})
+def registry_swap(alice):
+    return Swaps.deploy(ADDRESS_PROVIDER, ZERO_ADDRESS, {"from": alice})
 
 
 @pytest.fixture(scope="session")
