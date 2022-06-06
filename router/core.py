@@ -11,10 +11,10 @@ class Router:
         self.coin_map = CoinMap(coins)
 
     def get_routes(
-            self,
-            coin_a: str,
-            coin_b: str,
-            max_hops: int = 5,
+        self,
+        coin_a: str,
+        coin_b: str,
+        max_hops: int = 5,
     ) -> typing.Dict[int, typing.List[typing.Dict]]:
         """_summary_
 
@@ -46,12 +46,12 @@ class Router:
         return all_coin_routes
 
     def _depth_first_search(
-            self,
-            coin_to_sell: str,
-            target_coin_to_buy: str,
-            path: typing.List,
-            swap: typing.Optional[Swap] = None,
-            max_hops: int = 5,
+        self,
+        coin_to_sell: str,
+        target_coin_to_buy: str,
+        path: typing.List,
+        swap: typing.Optional[Swap] = None,
+        max_hops: int = 5,
     ) -> typing.List:
         """_summary_
 

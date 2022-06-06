@@ -1,5 +1,6 @@
 import typing
 from dataclasses import dataclass
+
 from brownie import ZERO_ADDRESS
 
 
@@ -41,4 +42,3 @@ class Swap:
     is_add_liquidity: bool = False  # lp token to coin in basepool
     is_remove_liquidity: bool = False  # coin to lp token in basepool
     zap_address: str = ZERO_ADDRESS  # contract for meta factory lending pools
-    use_eth: bool = True  # if cryptoswap then use eth and not weth

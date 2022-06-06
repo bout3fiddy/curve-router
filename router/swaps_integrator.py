@@ -3,6 +3,7 @@ import typing
 
 from brownie import ZERO_ADDRESS
 
+from router.constants import TRICRYPTO2
 from router.curve_router import get_route, initialise
 
 MAX_HOPS = 4
@@ -33,15 +34,12 @@ def get_swap_type(
     elif is_cryptoswap and is_pure_exchange:
         swap_type = 3
 
+    # cryptoswap `exchange_underlying` method to swap using eth and not weth
     elif is_cryptoswap and is_underlying:
-        swap_type = 4
+        # swap_type = 4
+        swap_type = 3  # ignoring swap type 4 entirely
 
-    elif (
-            is_metapool and
-            is_stableswap and
-            is_underlying and
-            is_poly_meta_zap
-    ):
+    elif is_metapool and is_stableswap and is_underlying and is_poly_meta_zap:
         swap_type = 5
 
     elif is_stableswap and is_add_liquidity and num_coins_in_pool == 2:
@@ -51,28 +49,24 @@ def get_swap_type(
         swap_type = 7
 
     elif (
-            is_stableswap and
-            is_add_liquidity and
-            num_coins_in_pool == 3 and
-            is_underlying
+        is_stableswap
+        and is_add_liquidity
+        and num_coins_in_pool == 3
+        and is_underlying
     ):
         swap_type = 8
 
     elif is_stableswap and is_remove_liquidity:
         swap_type = 9
 
-    elif (
-            is_stableswap and
-            is_remove_liquidity and
-            is_underlying
-    ):
+    elif is_stableswap and is_remove_liquidity and is_underlying:
         swap_type = 10
 
     return swap_type
 
 
 def convert_route_to_swaps_input(
-    curve_router_output: typing.List[typing.Dict],
+    route: typing.List[typing.Dict],
 ) -> typing.Dict:
     """Takes curve_router.py output (list of dicts) to an input that is
     digestible by `exchange_multiple` method in Swaps.vy router contract.
@@ -107,16 +101,21 @@ def convert_route_to_swaps_input(
     Output:
         Dict containing _route, _swap_params, _pools
     """
-    if not curve_router_output:
+    if not route:
         raise "No routes in router output!"
 
     # initialise output dict
     swaps_input = {
-        "_route": [curve_router_output[0]["coin_a"]],
+        "_route": [route[0]["coin_a"]],
         "_swap_params": [],
         "_pools": [],
     }
-    for hop in curve_router_output:
+
+    # If tricrypto2 in route, then use weth. else use eth
+    # (via `exchange_underlying`):
+    route_has_tricrypto2 = any(hop["pool"] == TRICRYPTO2 for hop in route)
+
+    for hop in route:
 
         # get _route input:
         swaps_input["_route"].append(hop["pool"])
@@ -126,15 +125,20 @@ def convert_route_to_swaps_input(
         i = hop["i"]
         j = hop["j"]
 
+        # if tricrypto is involved, the deal with weth. else eth.
+        is_underlying = hop["is_underlying"]
+        if route_has_tricrypto2 and hop["is_cryptoswap"]:
+            is_underlying = False
+
         swap_type = get_swap_type(
             is_stableswap=hop["is_stableswap"],
             is_add_liquidity=hop["is_add_liquidity"],
             is_remove_liquidity=hop["is_remove_liquidity"],
             is_metapool=hop["is_metapool"],
             is_cryptoswap=hop["is_cryptoswap"],
-            is_underlying=hop["is_underlying"],
+            is_underlying=is_underlying,
             is_poly_meta_zap=hop["zap_address"] is not ZERO_ADDRESS,
-            num_coins_in_pool=hop["num_coins_pool"]
+            num_coins_in_pool=hop["num_coins_pool"],
         )
         swaps_input["_swap_params"].append([i, j, swap_type])
 
@@ -145,7 +149,7 @@ def convert_route_to_swaps_input(
     swaps_input["_route"] += [ZERO_ADDRESS] * (
         MAX_HOPS * 2 + 1 - len(swaps_input["_route"])
     )
-    swaps_input["_swap_params"] += [0, 0, 0] * (
+    swaps_input["_swap_params"] += [[0, 0, 0]] * (
         MAX_HOPS - len(swaps_input["_swap_params"])
     )
     swaps_input["_pools"] += [ZERO_ADDRESS] * (

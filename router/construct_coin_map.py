@@ -97,7 +97,7 @@ def init_router(
                 is_add_liquidity=True,
                 base_pool=ZERO_ADDRESS,
                 pool_tvl_usd=sum(base_pool_reserves_usd),
-                num_coins_pool=len(base_pool_reserves_usd)
+                num_coins_pool=len(base_pool_reserves_usd),
             )
             router.coin_map.add_pair(coin, lp_token, swap)
 
@@ -118,7 +118,7 @@ def init_router(
                 is_remove_liquidity=True,
                 base_pool=ZERO_ADDRESS,
                 pool_tvl_usd=sum(base_pool_reserves_usd),
-                num_coins_pool=len(base_pool_reserves_usd)
+                num_coins_pool=len(base_pool_reserves_usd),
             )
             router.coin_map.add_pair(lp_token, coin, swap)
 
@@ -130,16 +130,6 @@ def init_router(
 
         pool_address = pool["address"]
         is_cryptoswap = pool["isV2"]
-
-        # for tricrypto2 use weth for swaps. for other crypto pools, use eth.
-        # this is due to gas reasons mentioned by mich.
-        use_eth = True
-        if (
-                is_cryptoswap and
-                pool_address == TRICRYPTO2 and
-                network_name == "Mainnet"
-        ):
-            use_eth = False
         is_metapool = pool["metapool"]
         coins_in_pool = pool["coins"]
         pool_reserves_usd = pool["reservesUsd"]
@@ -157,7 +147,7 @@ def init_router(
                     break  # stores base pool dataclass in base_pool
 
         # update coin_map in path_finder:
-        coin_pairs = list(itertools.combinations(coins_in_pool, 2))
+        coin_pairs = list(itertools.permutations(coins_in_pool, 2))
         for coin_pair in coin_pairs:
 
             coin_a = coin_pair[0]
@@ -193,11 +183,10 @@ def init_router(
 
             # it is an underlying swap if it is a metapool and lp token
             # isn't being swapped:
-            is_underlying = (
-                is_metapool and not swap_involves_basepool_lp_token
-            )
+            is_underlying = is_metapool and not swap_involves_basepool_lp_token
 
-            # get indices of coin_a and coin_b:
+            # get indices of coin_a and coin_b
+            # (is_underlying for metapools and lending pools):
             if not is_underlying:
                 i = pool["coins"].index(coin_a)
                 j = pool["coins"].index(coin_b)
@@ -215,6 +204,14 @@ def init_router(
             if is_metapool and base_pool.is_lending:
                 zap_address = base_pool.zap_address
 
+            # for crypto pools, use eth and not weth. This due to gas reasons
+            # mentioned by mich. this is the cryptopools exchange_underlying
+            # method.
+            if is_cryptoswap and pool_address is not TRICRYPTO2:
+                coin_a = ETH if coin_a == WETH else coin_a
+                coin_b = ETH if coin_b == WETH else coin_b
+                is_underlying = True
+
             # make swap object:
             swap = Swap(
                 pool=pool_address,
@@ -225,13 +222,12 @@ def init_router(
                 coin_a=coin_a,
                 coin_b=coin_b,
                 is_cryptoswap=is_cryptoswap,
-                use_eth=use_eth,
                 is_stableswap=not is_cryptoswap,
                 is_metapool=is_metapool,
                 is_underlying=is_underlying,
                 base_pool=pool["basePool"],
                 pool_tvl_usd=sum(pool_reserves_usd),
-                num_coins_pool=len(pool_reserves_usd)
+                num_coins_pool=len(pool_reserves_usd),
             )
             router.coin_map.add_pair(coin_a, coin_b, swap)
             num_pairs += 1
