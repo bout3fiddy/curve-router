@@ -1,13 +1,19 @@
 from brownie_tokens import MintableForkToken
 
-from router.constants import CRV, CVX, THREECRV_ADDR, cvxCRV
+from router.base_pools import USDT
+from router.constants import CRV, CVX, ETH, EURT, THREECRV_ADDR, cvxCRV, WBTC
 from router.curve_router import get_route
 from router.swaps_integrator import convert_route_to_swaps_input
 
 
 def test_swap_pairs_mainnet(router_mainnet, registry_swap, alice):
 
-    pair = [(THREECRV_ADDR, cvxCRV), (CRV, CVX)]
+    pair = [
+        (THREECRV_ADDR, cvxCRV),
+        (CRV, CVX),
+        (EURT, USDT),  # best path should have one hop with `swap_type` == 4
+        (ETH, WBTC)  # best path should be one hop on tricrypto2
+    ]
     amount_in = int(1e20)
     for (coin_a, coin_b) in pair:
         route = get_route(
@@ -20,6 +26,12 @@ def test_swap_pairs_mainnet(router_mainnet, registry_swap, alice):
         )
 
         assert len(route) > 0
+
+        if coin_a == EURT:
+            assert len(route) == 1  # should have one rout with swap_type == 4
+
+        if coin_a == ETH and coin_b == WBTC:
+            assert len(route) == 1
 
         swaps_input = convert_route_to_swaps_input(route)
         expected = registry_swap.get_exchange_multiple_amount(

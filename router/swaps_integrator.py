@@ -35,6 +35,7 @@ def get_swap_type(
         swap_type = 3
 
     # cryptoswap `exchange_underlying` method to swap using eth and not weth
+    # todo: the following is 4 for eurt3crv `exchange_underlying` on mainnet
     elif is_cryptoswap and is_underlying:
         # swap_type = 4
         swap_type = 3  # ignoring swap type 4 entirely
