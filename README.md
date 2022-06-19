@@ -1,6 +1,6 @@
 # Curve Router
 
-A work in progress dex router for curve.exchange. The current implementation is a simple depth-first search.
+A work in progress pythonic dex router for assets in a Curve pool. The current implementation is a simple depth-first search.
 
 
 ### TODO:
